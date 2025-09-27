@@ -9,6 +9,12 @@
 *.so.*
 *.dll
 *.dylib
+*.obj
+*.lib
+*.exe
+*.exp
+*.ilk
+*.pdb
 
 # Qt-es
 object_script.*.Release
@@ -21,9 +27,12 @@ object_script.*.Debug
 *.qbs.user
 *.qbs.user.*
 *.moc
+moc_*
 moc_*.cpp
 moc_*.h
+qrc_*
 qrc_*.cpp
+ui_*
 ui_*.h
 *.qmlc
 *.jsc
@@ -31,6 +40,18 @@ Makefile*
 *build-*
 *.qm
 *.prl
+
+# CMake build directories
+build/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+*.cbp
+*.vcxproj*
+*.sln
+out/
 
 # Qt unit tests
 target_wrapper.*
@@ -52,3 +73,44 @@ compile_commands.json
 *creator.user*
 
 *_qmlcache.qrc
+
+# Qt Creator specific files
+*.user.*
+.qmake.stash
+
+# IDE specific files (e.g., Visual Studio, VS Code)
+.vs/
+.vscode/
+*.suo
+*.user
+*.ncb
+*.aps
+*.opensdf
+*.sdf
+ipch/
+obj/
+Debug/
+Release/
+x64/
+Win32/
+
+# Documentation and temporary files
+*.bak
+*.orig
+*.rej
+*~
+*.log
+*.swp
+*.swo
+
+# macOS specific files
+.DS_Store
+
+# Windows specific files
+Thumbs.db
+
+# Conan related files (if using Conan for dependency management)
+conan_build/
+conan_install/
+conan_imports/
+conanfile.lock
