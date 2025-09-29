@@ -6,45 +6,74 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
+    <width>900</width>
     <height>600</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>900</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>900</width>
+    <height>600</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Auto Penyata</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
-  <widget class="QDockWidget" name="Sidebar">
+  <widget class="QWidget" name="centralwidget">
    <property name="minimumSize">
     <size>
-     <width>250</width>
+     <width>900</width>
      <height>600</height>
     </size>
    </property>
-   <property name="styleSheet">
-    <string notr="true">
-    QDockWidget::title {
-        border-bottom: 0px solid transparent; 
-    }
-
-    DockWidget::close-button, QDockWidget::float-button {
-        border: 0px; 
-    }
-    </string>
+   <property name="maximumSize">
+    <size>
+     <width>900</width>
+     <height>600</height>
+    </size>
    </property>
-   <property name="features">
-    <set>QDockWidget::DockWidgetFeature::NoDockWidgetFeatures</set>
-   </property>
-   <property name="allowedAreas">
-    <set>Qt::DockWidgetArea::LeftDockWidgetArea</set>
-   </property>
-   <property name="windowTitle">
-    <string/>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents"/>
+   <widget class="QWidget" name="MainScreen" native="true">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>0</y>
+      <width>650</width>
+      <height>600</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>650</width>
+      <height>600</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#MainScreen{
+background-color: rgb(51, 51, 51)
+}</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="SidebarWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>250</width>
+      <height>600</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#SidebarWidget{
+background-color: rgb(31, 31, 31)
+}</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
