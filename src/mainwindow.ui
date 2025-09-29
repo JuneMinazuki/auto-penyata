@@ -38,6 +38,87 @@
      <height>600</height>
     </size>
    </property>
+   <widget class="QListWidget" name="SidebarWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>250</width>
+      <height>600</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::FocusPolicy::NoFocus</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QListWidget {
+	border-right: 1px solid #dbdbdb;
+	padding-top: 5px;
+	background-color: #1a1a1a;
+}
+QListWidget::item {
+padding-top: 17px;
+padding-bottom: 17px;
+padding-left: 10px;
+padding-right: 10px;
+margin: 5px;
+border-radius: 8px;
+background-color: #363636;
+color: #E2E8F0;
+}
+QListWidget::item:hover {
+	background-color: #242424;
+}
+QListWidget::item:selected {
+	background-color: #121212;
+}</string>
+    </property>
+    <item>
+     <property name="text">
+      <string>📋 APUR</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>🛒 Belanja</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>📊 Hasil</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>🏠 Aset Bukan Semasa</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>💵 Aset Semasa</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>🤝 Liabiliti Bukan Semasa</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>🏦 Liabiliti Semasa</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>🏢 Ekuiti Pemilik</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>🛠️ Settings</string>
+     </property>
+    </item>
+   </widget>
    <widget class="QWidget" name="MainScreen" native="true">
     <property name="geometry">
      <rect>
@@ -55,22 +136,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">#MainScreen{
-background-color: rgb(51, 51, 51)
-}</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="SidebarWidget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>250</width>
-      <height>600</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">#SidebarWidget{
-background-color: rgb(31, 31, 31)
+background-color: #333333
 }</string>
     </property>
    </widget>
