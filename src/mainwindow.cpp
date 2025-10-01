@@ -17,39 +17,30 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// Hast of the item in sidebar
+static const QHash<QString, QString> s_sidebarActions = {
+    {"📋 APUR", "APUR"},
+    {"🛒 Belanja", "Belanja"},
+    {"📊 Hasil", "Hasil"},
+    {"🏠 Aset Bukan Semasa", "Aset Bukan Semasa"},
+    {"💵 Aset Semasa", "Aset Semasa"},
+    {"🤝 Liabiliti Bukan Semasa", "Liabiliti Bukan Semasa"},
+    {"🏦 Liabiliti Semasa", "Liabiliti Semasa"},
+    {"🏢 Ekuiti Pemilik", "Ekuiti Pemilik"},
+    {"🛠️ Settings", "Settings"},
+    {"🖨️ Export PDF", "Export PDF"}
+};
+
 void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
 {
     QString itemText = item->text();
     qDebug() << "Button Clicked:" << itemText;
 
-    if (itemText == "📋 APUR") {
-        qDebug() << "Action: Loading APUR";
+    if (s_sidebarActions.contains(itemText)) {
+        QString actionName = s_sidebarActions.value(itemText);
+        qDebug() << "Action: Loading" << actionName;
     }
-    else if (itemText ==  "🛒 Belanja"){
-        qDebug() << "Action: Loading Belanja";
-    }
-    else if (itemText ==  "📊 Hasil"){
-        qDebug() << "Action: Loading Hasil";
-    }
-    else if (itemText ==  "🏠 Aset Bukan Semasa"){
-        qDebug() << "Action: Loading Aset Bukan Semasa";
-    }
-    else if (itemText ==  "💵 Aset Semasa"){
-        qDebug() << "Action: Loading Aset Semasa";
-    }
-    else if (itemText ==  "🤝 Liabiliti Bukan Semasa"){
-        qDebug() << "Action: Loading Liabiliti Bukan Semasa";
-    }
-    else if (itemText ==  "🏦 Liabiliti Semasa"){
-        qDebug() << "Action: Loading Liabiliti Semasa";
-    }
-    else if (itemText ==  "🏢 Ekuiti Pemilik"){
-        qDebug() << "Action: Loading Ekuiti Pemilik";
-    }
-    else if (itemText ==  "🛠️ Settings"){
-        qDebug() << "Action: Loading Settings";
-    }
-    else if (itemText ==  "🖨️ Export PDF"){
-        qDebug() << "Action: Loading Export PDF";
+    else{
+        qDebug() << "ERROR: Unknown sidebar item clicked:" << itemText;
     }
 }
