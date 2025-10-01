@@ -1,18 +1,5 @@
 #include "mainwindow.h"
 
-#include <QApplication>
-#include <QMainWindow>
-#include <QWidget>
-#include <QListWidget>
-#include <QStackedWidget>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QPushButton>
-#include <QDebug>
-#include <QFont>
-#include <QStyleFactory>
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv); // Initializes the Qt system

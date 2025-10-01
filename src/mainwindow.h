@@ -1,10 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QApplication>
 #include <QMainWindow>
 #include <QListWidgetItem>
-#include <QHash>
-#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
