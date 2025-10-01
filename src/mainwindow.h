@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QListWidgetItem>
 #include <QHash>
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -24,5 +25,10 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    //VARIABLE
+    static QHash<QString, int> m_pageIndexMap;
+
+    void populatePageIndexMap(); // Helper function to populate the index map
 };
 #endif // MAINWINDOW_H

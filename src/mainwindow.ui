@@ -128,7 +128,7 @@ QListWidget::item:selected {
      </property>
     </item>
    </widget>
-   <widget class="QWidget" name="MainScreen" native="true">
+   <widget class="QStackedWidget" name="MainScreen">
     <property name="geometry">
      <rect>
       <x>250</x>
@@ -137,17 +137,159 @@ QListWidget::item:selected {
       <height>600</height>
      </rect>
     </property>
-    <property name="minimumSize">
-     <size>
-      <width>650</width>
-      <height>600</height>
-     </size>
+    <property name="currentIndex">
+     <number>9</number>
     </property>
-    <property name="styleSheet">
-     <string notr="true">#MainScreen{
-background-color: #333333
-}</string>
-    </property>
+    <widget class="QWidget" name="APUR">
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>40</y>
+        <width>58</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>APUR</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="Belanja">
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>40</y>
+        <width>58</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Belanja</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="Hasil">
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>40</y>
+        <width>58</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Hasil</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="AsetBukanSemasa">
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>40</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Aset Bukan Semasa</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="AsetSemasa">
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>40</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Aset Semasa</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="LiabilitiBukanSemasa">
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>40</y>
+        <width>141</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Liabiliti Bukan Semasa</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="LiabilitiSemasa">
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>40</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Liabiliti Semasa</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="EkuitiPemilik">
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>40</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Ekuiti Pemilik</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="Settings">
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>40</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Setting</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="Export">
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>40</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Export PDF</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
  </widget>
