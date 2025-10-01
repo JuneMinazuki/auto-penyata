@@ -49,4 +49,7 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
     else if (itemText ==  "🛠️ Settings"){
         qDebug() << "Action: Loading Settings";
     }
+    else if (itemText ==  "🖨️ Export PDF"){
+        qDebug() << "Action: Loading Export PDF";
+    }
 }
