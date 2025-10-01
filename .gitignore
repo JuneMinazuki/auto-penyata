@@ -114,3 +114,7 @@ conan_build/
 conan_install/
 conan_imports/
 conanfile.lock
+
+# Database
+*.db
+resetDB.py
