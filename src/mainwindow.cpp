@@ -1,8 +1,5 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include "databasemanager.h"
-
-#include <QListWidgetItem>
 
 // Hash of the item in sidebar
 static const QHash<QString, QString> s_sidebarActions = {
@@ -26,10 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this); 
-
-    // Set default page
     ui->MainScreen->setCurrentIndex(0);
-    MainWindow::displayAkaunData("APUR");
 
     // Populate the index map once
     populatePageIndexMap();
@@ -59,27 +53,14 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
 {
     QString itemText = item->text();
     qDebug() << "Button Clicked:" << itemText;
-    QString sidebarName = s_sidebarActions.value(itemText); 
+    QString actionName = s_sidebarActions.value(itemText); 
 
-    if (m_pageIndexMap.contains(sidebarName)) {
-        int index = m_pageIndexMap.value(sidebarName);
+    if (m_pageIndexMap.contains(actionName)) {
+        int index = m_pageIndexMap.value(actionName);
         ui->MainScreen->setCurrentIndex(index);
-        MainWindow::displayAkaunData(sidebarName);
+        qDebug() << "Switched to page:" << actionName << " at index:" << index;
     }
     else {
-        qDebug() << "ERROR: Page objectName not found in map:" << itemText;
+        qDebug() << "ERROR: age objectName not found in map:" << itemText;
     }
-}
-
-void MainWindow::displayAkaunData(QString sidebarName)
-{
-    // Model to read data from database
-    QSqlTableModel *model = DatabaseManager::instance().readAkaunData(sidebarName);
-    model->setEditStrategy(QSqlTableModel::OnRowChange);
-
-    model->setHeaderData(0, Qt::Horizontal, tr("Akaun"));
-    model->setHeaderData(1, Qt::Horizontal, tr("Value"));
-
-    ui->SQLTableView->setModel(model); 
-    ui->SQLTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
