@@ -117,4 +117,4 @@ conanfile.lock
 
 # Database
 *.db
-resetDB.py
+py_debug_config/
