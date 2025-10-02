@@ -20,6 +20,11 @@ public:
     ~MainWindow();
 
 private slots:
+    /**
+     * @brief Called when user click on sidebar button.
+     * 
+     * @param item Index of the sidebar button
+     */
     void onSidebarItemClicked(QListWidgetItem *item);
 
 private:
@@ -28,6 +33,9 @@ private:
     //VARIABLE
     static QHash<QString, int> m_pageIndexMap;
 
-    void populatePageIndexMap(); // Helper function to populate the index map
+    /**
+     * @brief Populate the index map to the button on the sidebar
+     */
+    void populatePageIndexMap();
 };
 #endif // MAINWINDOW_H
