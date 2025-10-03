@@ -157,16 +157,40 @@ void JsonManager::initialJsonSetup()
         }},
     };
 
-    // The loop iterates over all files and creates them ONLY if settings.isEmpty()
+    // The loop iterates over all files and creates them if necessary 
     for (const auto& item : ALL_JSON_FILES)
     {
         // Read the existing file
         QVariantMap datas = readJson(item.fileName);
+        bool writeRequired = false;
 
-        if (datas.isEmpty()) 
+        // File is missing or empty, write initial data
+        if (datas.isEmpty())
         {
-            qInfo() << "Initializing" << item.fileName << "with default values.";
-            writeJson(item.fileName, item.defaultData);
+            qInfo() << "Initializing" << item.fileName << "with initial data.";
+            datas = item.defaultData;
+            writeRequired = true;
+        }
+        // File exists, check for missing keys
+        else
+        {
+            for (auto it = item.defaultData.constBegin(); it != item.defaultData.constEnd(); ++it)
+            {
+                const QString& key = it.key();
+
+                if (!datas.contains(key))
+                {
+                    datas.insert(key, it.value());
+                    qWarning() << "Missing key found and added in" << item.fileName << ":" << key;
+                    writeRequired = true;
+                }
+            }
+        }
+
+        // Write to JSON
+        if (writeRequired)
+        {
+            writeJson(item.fileName, datas);
         }
     }
 }
