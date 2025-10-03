@@ -1,10 +1,15 @@
 #include "jsonmanager.h"
 
+#include <QDir>
+#include <QStandardPaths>
+#include <QJsonDocument>
+#include <QJsonObject>
+
 JsonManager::JsonManager(QObject *parent)
     : QObject(parent)
 {
     // Ensure the Application Support directory exists on startup
-    QDir dir(getAppConfigFile());
+    QDir dir(getAppFilePath(""));
     dir.mkpath(dir.path());
 }
 
@@ -14,10 +19,10 @@ JsonManager::JsonManager(QObject *parent)
  * @param fileName The name of the file [Ex. data.json]
  * @return Full path to the specific JSON
  */
-QString JsonManager::getAppFilePath(const QString& fileName) const
+QString JsonManager::getAppFilePath(const QString& fileName)
 {
     // Get the standard location for application data
-    QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
 
     // Construct the full path by appending the specific file name
     QDir dir(configDir);
@@ -31,7 +36,7 @@ QString JsonManager::getAppFilePath(const QString& fileName) const
  * @param fileName The name of the JSON file to read
  * @return A QVariantMap containing the settings, or an empty map on failure
  */
-QVariantMap JsonManager::readJson(const QString& fileName) const
+QVariantMap JsonManager::readJson(const QString& fileName)
 {
     QString filePath = getAppFilePath(fileName);
     QFile file(filePath);
@@ -62,7 +67,7 @@ QVariantMap JsonManager::readJson(const QString& fileName) const
  * @param datas The map of datas to save
  * @return true if the write was successful, false otherwise
  */
-bool JsonManager::writeJson(const QString& fileName, const QVariantMap& datas) const
+bool JsonManager::writeJson(const QString& fileName, const QVariantMap& datas)
 {
     QString filePath = getAppFilePath(fileName);
 
@@ -89,6 +94,98 @@ bool JsonManager::writeJson(const QString& fileName, const QVariantMap& datas) c
     file.write(doc.toJson(QJsonDocument::Indented));
     file.close();
     
-    qDebug() << "Successfully saved config to:" << filePath;
+    qDebug() << "Successfully saved data to:" << filePath;
     return true;
+}
+
+// Setup initial JSON
+void JsonManager::initialJsonSetup()
+{
+    // Initial data for setup
+    static const std::vector<JsonSetupItem> ALL_JSON_FILES = {
+        {"apur.json", {
+            {"Jualan", 0.0},
+            {"Belian", 0.0},
+            {"PulanganJualan", 0.0},
+            {"PulanganBelian", 0.0},
+            {"InventoriAwal", 0.0},
+            {"InventoriAkhir", 0.0},
+            {"AngkutanMasuk", 0.0},
+            {"UpahAtasBelian", 0.0},
+            {"DutiImport", 0.0},
+            {"InsuransAtasBelian", 0.0}
+        }},
+
+        {"belanja.json", {
+            {"_placeholder", true}
+        }},
+
+        {"hasil.json", {
+            {"_placeholder", true}
+        }},
+
+        {"aset_bukan_semasa.json", {
+            {"_placeholder", true}
+        }},
+
+        {"aset_semasa.json", {
+            {"Tunai", 0.0},
+            {"Bank", 0.0},
+            {"AkaunBelumTerima", 0.0},
+            {"PeruntukanHutangRagu", 0.0},
+            {"CustomAccounts", QVariantMap{}} 
+        }},
+
+        {"liabiliti_bukan_semasa.json", {
+            {"_placeholder", true}
+        }},
+
+        {"liabiliti_semasa.json", {
+            {"AkaunBelumBayar", 0.0},
+            {"CustomAccounts", QVariantMap{}} 
+        }},
+
+        {"ekuiti_pemilik.json", {
+            {"ModalAwal", 0.0},
+            {"Ambilan", 0.0},
+        }},
+
+        {"setting.json", {
+            {"CompanyName", ""},
+            {"Date", ""}
+        }},
+    };
+
+    // The loop iterates over all files and creates them ONLY if settings.isEmpty()
+    for (const auto& item : ALL_JSON_FILES)
+    {
+        // Read the existing file
+        QVariantMap datas = readJson(item.fileName);
+
+        if (datas.isEmpty()) 
+        {
+            qInfo() << "Initializing" << item.fileName << "with default values.";
+            writeJson(item.fileName, item.defaultData);
+        }
+    }
+}
+
+// Get display name with spaces
+QString JsonManager::getDisplayName(const QString& internalKey)
+{
+    static const QMap<QString, QString> keyMap = {
+        {"Jualan", "Jualan"},
+        {"Belian", "Belian"},
+        {"PulanganJualan", "Pulangan Jualan"},
+        {"PulanganBelian", "Pulangan Belian"},
+        {"InventoriAwal", "Inventori Awal"},
+        {"InventoriAkhir", "Inventori Akhir"},
+        {"AngkutanMasuk", "Angkutan Masuk"},
+        {"UpahAtasBelian", "Upah Atas Belian"},
+        {"DutiImport", "Duti Import"},
+        {"InsuransAtasBelian", "Insurans Atas Belian"}
+    };
+
+    // Look up the display name. If not found, return the key as is.
+    return keyMap.value(internalKey, internalKey);
 }

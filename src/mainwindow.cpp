@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "jsonmanager.h"
 
 // Hash of the item in sidebar
 static const QHash<QString, QString> s_sidebarActions = {
@@ -25,6 +26,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this); 
     ui->MainScreen->setCurrentIndex(0);
 
+    // Setup JSON (if applicable)
+    JsonManager::initialJsonSetup();
+
     // Populate the index map once
     populatePageIndexMap();
 
@@ -49,6 +53,7 @@ void MainWindow::populatePageIndexMap()
     }
 }
 
+// Called when user click on sidebar button.
 void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
 {
     QString itemText = item->text();

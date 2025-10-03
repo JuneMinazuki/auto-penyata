@@ -1,23 +1,37 @@
 #ifndef JSONMANAGER_H
 #define JSONMANAGER_H
 
+#include <QObject>
+#include <QVariantMap> 
+
 class JsonManager : public QObject
 {
     Q_OBJECT
 
 public:
+    struct JsonSetupItem {
+        QString fileName;
+        QVariantMap defaultData;
+    };
+
     explicit JsonManager(QObject *parent = nullptr);
 
     // Public methods to interact with the JSON data
-    QVariantMap readJson(const QString& fileName) const;
-    bool writeJson(const QString& fileName, const QVariantMap& settings) const
+    static QVariantMap readJson(const QString& fileName);
+    static bool writeJson(const QString &fileName, const QVariantMap &settings);
 
-private:
+    // Initial setup
+    static void initialJsonSetup();
+
+    // Display data
+    static QString getDisplayName(const QString& internalKey);
+
+private :
     // Constants for application identification
     const QString APPLICATION_NAME = "AutoPenyata";
 
     // Helper methods to get the correct JSON paths
-    QString getAppFilePath(const QString& fileName) const;
+    static QString getAppFilePath(const QString& fileName);
 
 };
 #endif // JSONMANAGER_H
