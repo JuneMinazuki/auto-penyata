@@ -49,7 +49,6 @@ void MainWindow::populatePageIndexMap()
     }
 }
 
-// Called when user click on sidebar button.
 void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
 {
     QString itemText = item->text();
