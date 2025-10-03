@@ -29,5 +29,8 @@ private:
     static QHash<QString, int> m_pageIndexMap;
 
     void populatePageIndexMap(); // Helper function to populate the index map
+
+    // Page switch
+    void handleSettingActivation();
 };
 #endif // MAINWINDOW_H

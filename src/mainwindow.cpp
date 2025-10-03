@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Populate the index map once
     populatePageIndexMap();
 
-    // Connect the signal to the slot
+    // When user click on sidebar button
     connect(ui->SidebarWidget, &QListWidget::itemClicked, 
             this, &MainWindow::onSidebarItemClicked);
 }
@@ -58,15 +58,45 @@ void MainWindow::populatePageIndexMap()
 void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
 {
     QString itemText = item->text();
-    qDebug() << "Button Clicked:" << itemText;
     QString actionName = s_sidebarActions.value(itemText); 
 
     if (m_pageIndexMap.contains(actionName)) {
         int index = m_pageIndexMap.value(actionName);
         ui->MainScreen->setCurrentIndex(index);
-        qDebug() << "Switched to page:" << actionName << " at index:" << index;
+        qDebug() << "Switched to page:" << actionName;
+
+        switch (index) {
+            case 0: // APUR
+                break;
+            case 1: // Belanja
+                break;
+            case 2: // Hasil
+                break;
+            case 3: // Aset Bukan Semasa
+                break;
+            case 4: // Aset Semasa
+                break;
+            case 5: // Liabiliti Bukan Semasa
+                break;
+            case 6: // Liabiliti Semasa
+                break;
+            case 7: // Ekuiti Pemilik
+                break;
+            case 8: // Setting
+                handleSettingActivation();
+                break;
+            case 9: // Export PDF
+                break;
+        }
     }
     else {
-        qDebug() << "ERROR: age objectName not found in map:" << itemText;
+        qDebug() << "ERROR: Page not found in map:" << itemText;
     }
+}
+
+void MainWindow::handleSettingActivation()
+{
+    qDebug() << "Handling setting page.";
+    
+    ui->label_saved_status->setVisible(false); // Hide save label
 }
