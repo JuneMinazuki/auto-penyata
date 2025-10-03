@@ -22,6 +22,7 @@ public:
 
     // Initial setup
     static void initialJsonSetup();
+    static void updateCurrentDate();
 
     // Display data
     static QString getDisplayName(const QString& internalKey);

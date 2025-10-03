@@ -56,7 +56,7 @@
 	padding-top: 5px;
 	padding-left: 5px;
 	padding-right: 5px;
-	background-color: #1c1c1c;
+	background-color: #181818;
 }
 QListWidget::item {
 	padding-top: 15px;
@@ -65,7 +65,7 @@ QListWidget::item {
 	padding-right: 10px;
 	margin: 5px;
 	border-radius: 3px;
-	background-color: #1c1c1c;
+	background-color: #181818;
 	color: #E2E8F0;
 	border-width: 1px;
 	border-style: solid;
@@ -74,7 +74,7 @@ QListWidget::item:hover {
 	background-color: #404040;
 }
 QListWidget::item:selected {
-	background-color: #030303;
+	background-color: #010101;
 }</string>
     </property>
     <item>
@@ -137,8 +137,13 @@ QListWidget::item:selected {
       <height>600</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">QStackedWidget{
+    background-color: #333333;
+}</string>
+    </property>
     <property name="currentIndex">
-     <number>9</number>
+     <number>8</number>
     </property>
     <widget class="QWidget" name="APUR">
      <widget class="QLabel" name="label">
@@ -261,17 +266,177 @@ QListWidget::item:selected {
      </widget>
     </widget>
     <widget class="QWidget" name="Settings">
-     <widget class="QLabel" name="label_9">
+     <widget class="QLabel" name="label_settings">
       <property name="geometry">
        <rect>
         <x>40</x>
-        <y>40</y>
-        <width>131</width>
-        <height>16</height>
+        <y>20</y>
+        <width>150</width>
+        <height>35</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>30</pointsize>
+        <bold>true</bold>
+        <underline>true</underline>
+        <kerning>true</kerning>
+       </font>
+      </property>
       <property name="text">
-       <string>Setting</string>
+       <string>Settings</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_company_name">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>80</y>
+        <width>161</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Company Name:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_date">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>120</y>
+        <width>161</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Date:</string>
+      </property>
+     </widget>
+     <widget class="QDateEdit" name="input_date">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>120</y>
+        <width>121</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QDateEdit {
+    background-color: #333333;
+    color: #e6e6e6;
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+QDateEdit:focus {
+    border: 1px solid #00aaff;
+}
+
+QDateEdit::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: center right;
+    padding-right: 10px;
+    width: 20px;
+    height: 20px;
+}
+
+QCalendarWidget {
+    background-color: #333333;
+    color: #e6e6e6;
+    border: 1px solid #555555;
+    border-radius: 5px;
+    min-height: 250px
+}
+
+#qt_calendar_navigationbar {
+    background-color: #2b2b2b;
+    border-bottom: 1px solid #555555;
+}
+
+QCalendarWidget QToolButton {
+    background-color: #2b2b2b;
+    color: #e6e6e6;
+    border: none;
+    font-size: 14px;
+    margin: 2px;
+}
+
+QCalendarWidget QToolButton:hover {
+    background-color: #444444;
+    border-radius: 3px;
+}
+
+QCalendarWidget QToolButton::menu-indicator {
+    image: none;
+    width: 0px;
+    height: 0px;
+}
+
+QCalendarWidget QAbstractItemView {
+    background-color: #333333;
+    border: none;
+    outline: none;
+    color: #e6e6e6;
+    selection-background-color: #00aaff;
+    selection-color: white;
+    alternate-background-color: #383838;
+    gridline-color: #444444; 
+    min-height: 200px;
+}
+
+QCalendarWidget QAbstractItemView::section {
+    background-color: #2b2b2b;
+    color: #e6e6e6; 
+    border: none;
+}</string>
+      </property>
+      <property name="calendarPopup">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="input_company_name">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>80</y>
+        <width>390</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>15</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLineEdit {
+    background-color: #333333;
+    color: #e6e6e6;
+    border: 1px solid #cccccc; 
+    border-radius: 5px; 
+    padding: 7px 10px;
+}
+
+QLineEdit:focus {
+    border: 1px solid #00aaff; 
+}</string>
       </property>
      </widget>
     </widget>

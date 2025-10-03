@@ -102,6 +102,7 @@ bool JsonManager::writeJson(const QString& fileName, const QVariantMap& datas)
 void JsonManager::initialJsonSetup()
 {
     // Initial data for setup
+    QString todayDate = QDate::currentDate().toString("dd/MM/yyyy");
     static const std::vector<JsonSetupItem> ALL_JSON_FILES = {
         {"apur.json", {
             {"Jualan", 0.0},
@@ -152,7 +153,7 @@ void JsonManager::initialJsonSetup()
 
         {"setting.json", {
             {"CompanyName", ""},
-            {"Date", ""}
+            {"Date", todayDate}
         }},
     };
 
@@ -166,6 +167,40 @@ void JsonManager::initialJsonSetup()
         {
             qInfo() << "Initializing" << item.fileName << "with default values.";
             writeJson(item.fileName, item.defaultData);
+        }
+    }
+}
+
+// Update current date
+void JsonManager::updateCurrentDate()
+{
+    // Read from settings file
+    QVariantMap settings = readJson("setting.json");
+
+    // Get today date
+    QString todayDate = QDate::currentDate().toString("dd/MM/yyyy");
+
+    // Check if successfully read and "Date" exists
+    if (!settings.isEmpty() && settings.contains("Date"))
+    {
+        // Check if date is today
+        const QString oldDate = settings.value("Date").toString();
+        if (oldDate == todayDate)
+        {
+            qInfo() << "Date is already today:" << todayDate;
+            return;
+        }
+
+        // Update date
+        settings["Date"] = todayDate;
+
+        if (writeJson("setting.json", settings))
+        {
+            qInfo() << "Updated 'Date' in setting.json to:" << todayDate;
+        }
+        else
+        {
+            qWarning() << "Failed to write updated date to setting.json";
         }
     }
 }
