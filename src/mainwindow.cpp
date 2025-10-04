@@ -28,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Setup JSON (if applicable)
     JsonManager::initialJsonSetup();
-    JsonManager::updateCurrentDate();
 
     // Populate the index map once
     populatePageIndexMap();

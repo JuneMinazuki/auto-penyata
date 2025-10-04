@@ -23,7 +23,6 @@ public:
 
     // Initial setup
     static void initialJsonSetup();
-    static void updateCurrentDate();
 
     // Reset JSON
     static bool resetJSON();

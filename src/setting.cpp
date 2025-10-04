@@ -109,7 +109,7 @@ void Setting::handleResetButtonClick()
 // When user press setToday button
 void Setting::handleSetTodayButtonClick()
 {
-    qDebug() << "Change date to today";
+    qDebug() << "Change date to today:" << QDate::currentDate();
     ui->input_date->setDate(QDate::currentDate());
 }
 

@@ -254,40 +254,6 @@ bool JsonManager::resetJSON()
     return allFilesRemoved;
 }
 
-// Update current date
-void JsonManager::updateCurrentDate()
-{
-    // Read from settings file
-    QVariantMap settings = readJson("setting.json");
-
-    // Get today date
-    QString todayDate = QDate::currentDate().toString("dd/MM/yyyy");
-
-    // Check if successfully read and "Date" exists
-    if (!settings.isEmpty() && settings.contains("Date"))
-    {
-        // Check if date is today
-        const QString oldDate = settings.value("Date").toString();
-        if (oldDate == todayDate)
-        {
-            qInfo() << "Date is already today:" << todayDate;
-            return;
-        }
-
-        // Update date
-        settings["Date"] = todayDate;
-
-        if (writeJson("setting.json", settings))
-        {
-            qInfo() << "Updated 'Date' in setting.json to:" << todayDate;
-        }
-        else
-        {
-            qWarning() << "Failed to write updated date to setting.json";
-        }
-    }
-}
-
 // Get display name with spaces
 QString JsonManager::getDisplayName(const QString& internalKey)
 {
