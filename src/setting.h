@@ -16,5 +16,11 @@ private slots:
     // Called when Reset button pressed
     void handleResetButtonClick(QLabel *label_reset);
 
+private:
+    Ui::MainWindow *ui = nullptr; 
+
+    // Read from Json
+    void loadJson();
+
 };
 #endif // SETTING_H

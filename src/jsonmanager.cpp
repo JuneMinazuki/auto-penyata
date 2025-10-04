@@ -229,6 +229,7 @@ bool JsonManager::resetJSON()
         }
     }
 
+    initialJsonSetup();
     return allFilesRemoved;
 }
 

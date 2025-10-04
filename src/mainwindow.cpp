@@ -63,7 +63,6 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
     if (m_pageIndexMap.contains(actionName)) {
         int index = m_pageIndexMap.value(actionName);
         ui->MainScreen->setCurrentIndex(index);
-        qDebug() << "Switched to page:" << actionName;
 
         switch (index) {
             case 0: // APUR
