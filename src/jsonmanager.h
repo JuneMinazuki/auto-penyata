@@ -19,6 +19,7 @@ public:
     // Public methods to interact with the JSON data
     static QVariantMap readJson(const QString& fileName);
     static bool writeJson(const QString &fileName, const QVariantMap &settings);
+    static bool updateJson(const QString& fileName, const QVariantMap& datas);
 
     // Initial setup
     static void initialJsonSetup();

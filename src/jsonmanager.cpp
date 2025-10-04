@@ -98,6 +98,27 @@ bool JsonManager::writeJson(const QString& fileName, const QVariantMap& datas)
     return true;
 }
 
+/**
+ * @brief Overwrite existing key in QVariantMap to a JSON file
+ *
+ * @param fileName The name of the JSON file to write
+ * @param datas The map of datas to save
+ * @return true if the write was successful, false otherwise
+ */
+bool JsonManager::updateJson(const QString& fileName, const QVariantMap& datas)
+{
+    // Read existing data from json
+    QVariantMap existingData = readJson(fileName);
+
+    // Overwrite new data into the existing data
+    for (auto it = datas.constBegin(); it != datas.constEnd(); ++it) {
+        existingData[it.key()] = it.value();
+    }
+
+    // Update Json with key value
+    return writeJson(fileName, existingData);
+}
+
 // Setup initial JSON
 void JsonManager::initialJsonSetup()
 {
