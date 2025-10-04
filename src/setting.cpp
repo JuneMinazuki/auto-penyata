@@ -10,15 +10,15 @@ void Setting::handleSettingActivation(Ui::MainWindow *m_ui)
     
     ui->label_saved_status->setVisible(false); // Hide save label
     ui->label_reset_status->setVisible(false); // Hide reset label
-
-    // Disconnect any previous connection
-    disconnect(ui->button_reset, &QPushButton::clicked,
-                nullptr, nullptr);
+    ui->button_save->setEnabled(false); // Disable save button
     
-    // Reset button
-    connect(ui->button_reset, &QPushButton::clicked, 
-            this, [this]() {this->handleResetButtonClick(ui->label_reset_status);
-    });
+    // Button
+    connect(ui->button_save, &QPushButton::clicked, this, &Setting::handleSaveButtonClick); // Save button
+    connect(ui->button_reset, &QPushButton::clicked, this, &Setting::handleResetButtonClick); // Reset button
+
+    // Check for value changed
+    connect(ui->input_company_name, &QLineEdit::textEdited, this, &Setting::checkForChanges);
+    connect(ui->input_date, &QDateEdit::editingFinished, this, &Setting::checkForChanges);
 }
 
 // Load from JSON
@@ -33,12 +33,10 @@ void Setting::loadJson()
 
     // Find "CompanyName"
     if (settings.contains("CompanyName")) {
-        QString companyName = settings["CompanyName"].toString();
-
-        ui->input_company_name->setText(companyName);
+        initialCompanyName = settings["CompanyName"].toString();
     } else {
         qWarning() << "Key 'CompanyName' not found in setting.json.";
-        ui->input_company_name->setText(""); 
+        initialCompanyName = ""; 
     }
 
     // Find "Date"
@@ -48,35 +46,70 @@ void Setting::loadJson()
 
         // Check if the conversion was successful
         if (date.isValid()) {
-            ui->input_date->setDate(date);
+            initialDate = date;
         } else {
             qWarning() << "Date string '" << dateString << "' is not in the expected format (DD/MM/YYYY).";
-            ui->input_date->setDate(QDate::currentDate());
+            initialDate = QDate::currentDate();
         }
     } else {
         qWarning() << "Key 'Date' not found in settings.";
-        ui->input_date->setDate(QDate::currentDate()); 
+        initialDate = QDate::currentDate();
     }
+
+    // Update the form
+    ui->input_company_name->setText(initialCompanyName);
+    ui->input_date->setDate(initialDate);
 }
 
 // When user press Reset button
-void Setting::handleResetButtonClick(QLabel *label_reset)
+void Setting::handleSaveButtonClick()
+{
+    QVariantMap settingsMap{
+        {"CompanyName", ui->input_company_name->text()},
+        {"Date", ui->input_date->date()}
+    };
+
+    if (JsonManager::writeJson("setting.json", settingsMap)) {
+        ui->label_saved_status->setText("Saved!");
+        ui->label_saved_status->setStyleSheet("QLabel { color : #37ba1e }");
+
+        // Disable save button
+        initialCompanyName = ui->input_company_name->text();
+        initialDate = ui->input_date->date();
+        ui->button_save->setEnabled(false);
+    } else {
+        ui->label_saved_status->setText("Failed to save!");
+        ui->label_saved_status->setStyleSheet("QLabel { color : #e21717 }");
+    }
+
+    ui->label_saved_status->setVisible(true);
+}
+
+// When user press Reset button
+void Setting::handleResetButtonClick()
 {
     // Reset JSON
-    bool success = JsonManager::resetJSON();
-
-    // Update the label based on the return value
-    if (success)
+    if (JsonManager::resetJSON())
     {
-        label_reset->setText("Reset Successful!");
-        label_reset->setStyleSheet("QLabel { color : #37ba1e }");
+        ui->label_reset_status->setText("Reset Successful!");
+        ui->label_reset_status->setStyleSheet("QLabel { color : #37ba1e }");
     }
     else
     {
-        label_reset->setText("Reset Failed!");
-        label_reset->setStyleSheet("QLabel { color : #e21717 }");
+        ui->label_reset_status->setText("Reset Failed!");
+        ui->label_reset_status->setStyleSheet("QLabel { color : #e21717 }");
     }
 
-    label_reset->setVisible(true);
+    ui->label_reset_status->setVisible(true);
     loadJson();
+}
+
+// Check for changes
+void Setting::checkForChanges() 
+{
+    // Compare current values against initial values
+    bool changed = (ui->input_company_name->text() != initialCompanyName) || (ui->input_date->date() != initialDate);
+
+    // Enable or disable the Save button
+    ui->button_save->setEnabled(changed);
 }

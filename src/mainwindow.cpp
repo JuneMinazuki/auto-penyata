@@ -34,8 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
     populatePageIndexMap();
 
     // When user click on sidebar button
-    connect(ui->SidebarWidget, &QListWidget::itemClicked, 
-            this, &MainWindow::onSidebarItemClicked);
+    connect(ui->SidebarWidget, &QListWidget::itemClicked, this, &MainWindow::onSidebarItemClicked);
 }
 
 MainWindow::~MainWindow()

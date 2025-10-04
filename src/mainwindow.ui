@@ -535,7 +535,7 @@ QPushButton:disabled {
       <property name="geometry">
        <rect>
         <x>170</x>
-        <y>180</y>
+        <y>182</y>
         <width>161</width>
         <height>31</height>
        </rect>
@@ -604,8 +604,8 @@ QPushButton:pressed {
       <property name="geometry">
        <rect>
         <x>170</x>
-        <y>520</y>
-        <width>161</width>
+        <y>522</y>
+        <width>281</width>
         <height>31</height>
        </rect>
       </property>
@@ -621,7 +621,7 @@ QPushButton:pressed {
 }</string>
       </property>
       <property name="text">
-       <string>Reset!</string>
+       <string>Reset Successful!</string>
       </property>
      </widget>
     </widget>

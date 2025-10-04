@@ -13,11 +13,18 @@ public:
     void handleSettingActivation(Ui::MainWindow *ui);
 
 private slots:
-    // Called when Reset button pressed
-    void handleResetButtonClick(QLabel *label_reset);
+    // Button
+    void handleSaveButtonClick(); // Called when Save button pressed
+    void handleResetButtonClick(); // Called when Reset button pressed
+
+    void checkForChanges(); // Check for value changed
 
 private:
     Ui::MainWindow *ui = nullptr; 
+
+    // VARIABLE
+    QString initialCompanyName;
+    QDate initialDate;
 
     // Read from Json
     void loadJson();
