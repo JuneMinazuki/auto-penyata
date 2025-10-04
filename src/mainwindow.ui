@@ -555,6 +555,75 @@ QPushButton:disabled {
        <string>Saved!</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="button_reset">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>520</y>
+        <width>110</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    background-color: #181818;
+    color: #e6e6e6;
+    border: 1px solid #cccccc; 
+    border-radius: 5px; 
+    padding: 7px 10px;
+}
+
+QPushButton:hover {
+    background-color: #404040;
+}
+
+QPushButton:pressed {
+    background-color: #010101;
+}</string>
+      </property>
+      <property name="text">
+       <string>Reset</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_reset_status">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>520</y>
+        <width>161</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>15</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLabel{
+	color: #37ba1e
+}</string>
+      </property>
+      <property name="text">
+       <string>Reset!</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="Export">
      <widget class="QLabel" name="label_10">

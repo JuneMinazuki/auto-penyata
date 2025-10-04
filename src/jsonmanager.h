@@ -24,6 +24,9 @@ public:
     static void initialJsonSetup();
     static void updateCurrentDate();
 
+    // Reset JSON
+    static bool resetJSON();
+
     // Display data
     static QString getDisplayName(const QString& internalKey);
 

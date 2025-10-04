@@ -83,7 +83,7 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
             case 7: // Ekuiti Pemilik
                 break;
             case 8: // Setting
-                handleSettingActivation();
+                settingPage.handleSettingActivation(ui);
                 break;
             case 9: // Export PDF
                 break;
@@ -92,11 +92,4 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
     else {
         qDebug() << "ERROR: Page not found in map:" << itemText;
     }
-}
-
-void MainWindow::handleSettingActivation()
-{
-    qDebug() << "Handling setting page.";
-    
-    ui->label_saved_status->setVisible(false); // Hide save label
 }

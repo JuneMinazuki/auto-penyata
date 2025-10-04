@@ -20,6 +20,8 @@ set(PROJECT_SOURCES
         src/mainwindow.ui
         src/jsonmanager.cpp
         src/jsonmanager.h
+        src/setting.cpp
+        src/setting.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

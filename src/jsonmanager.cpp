@@ -152,7 +152,7 @@ void JsonManager::initialJsonSetup()
         }},
 
         {"setting.json", {
-            {"CompanyName", ""},
+            {"CompanyName", "YourCompanyName"},
             {"Date", todayDate}
         }},
     };
@@ -193,6 +193,43 @@ void JsonManager::initialJsonSetup()
             writeJson(item.fileName, datas);
         }
     }
+}
+
+// Reset JSON
+bool JsonManager::resetJSON()
+{
+    bool allFilesRemoved = true;
+    QStringList json_to_reset = {
+        "apur.json",
+        "belanja.json",
+        "hasil.json",
+        "aset_bukan_semasa.json",
+        "aset_semasa.json",
+        "liabiliti_bukan_semasa.json",
+        "liabiliti_semasa.json",
+        "ekuiti_pemilik.json",
+        "setting.json",
+    };
+
+    for (const auto& filename : json_to_reset) {
+        QString filePath = getAppFilePath(filename);
+
+        // Check if the file exist
+        if (!QFile::exists(filePath)) {
+            qWarning() << "File not found, skipping:" << filePath;
+            continue;
+        }
+
+        // Attempt to remove the file
+        if (QFile::remove(filePath)) {
+            qDebug() << "Successfully removed file:" << filename;
+        } else {
+            qWarning() << "ERROR: Failed to remove file:" << filename;
+            allFilesRemoved = false;
+        }
+    }
+
+    return allFilesRemoved;
 }
 
 // Update current date

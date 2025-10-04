@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "setting.h"
+
 #include <QApplication>
 #include <QMainWindow>
 #include <QListWidgetItem>
@@ -25,12 +27,12 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    // Pages
+    Setting settingPage;
+
     //VARIABLE
     static QHash<QString, int> m_pageIndexMap;
 
     void populatePageIndexMap(); // Helper function to populate the index map
-
-    // Page switch
-    void handleSettingActivation();
 };
 #endif // MAINWINDOW_H
