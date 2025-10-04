@@ -16,6 +16,7 @@ private slots:
     // Button
     void handleSaveButtonClick(); // Called when Save button pressed
     void handleResetButtonClick(); // Called when Reset button pressed
+    void handleSetTodayButtonClick(); // Called when setToday button pressed
 
     void checkForChanges(); // Check for value changed
 

@@ -15,10 +15,12 @@ void Setting::handleSettingActivation(Ui::MainWindow *m_ui)
     // Button
     connect(ui->button_save, &QPushButton::clicked, this, &Setting::handleSaveButtonClick); // Save button
     connect(ui->button_reset, &QPushButton::clicked, this, &Setting::handleResetButtonClick); // Reset button
+    connect(ui->button_setToday, &QPushButton::clicked, this, &Setting::handleSetTodayButtonClick); // setToday button
 
     // Check for value changed
     connect(ui->input_company_name, &QLineEdit::textEdited, this, &Setting::checkForChanges);
     connect(ui->input_date, &QDateEdit::editingFinished, this, &Setting::checkForChanges);
+    connect(ui->input_date, &QDateEdit::dateChanged, this, &Setting::checkForChanges);
 }
 
 // Load from JSON
@@ -102,6 +104,13 @@ void Setting::handleResetButtonClick()
 
     ui->label_reset_status->setVisible(true);
     loadJson();
+}
+
+// When user press setToday button
+void Setting::handleSetTodayButtonClick()
+{
+    qDebug() << "Change date to today";
+    ui->input_date->setDate(QDate::currentDate());
 }
 
 // Check for changes

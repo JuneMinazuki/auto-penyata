@@ -31,9 +31,6 @@ public:
     static QString getDisplayName(const QString& internalKey);
 
 private :
-    // Constants for application identification
-    const QString APPLICATION_NAME = "AutoPenyata";
-
     // Helper methods to get the correct JSON paths
     static QString getAppFilePath(const QString& fileName);
 
