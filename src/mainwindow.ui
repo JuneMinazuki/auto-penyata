@@ -143,20 +143,126 @@ QListWidget::item:selected {
 }</string>
     </property>
     <property name="currentIndex">
-     <number>8</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="APUR">
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="label_apur">
       <property name="geometry">
        <rect>
         <x>40</x>
-        <y>40</y>
-        <width>58</width>
-        <height>16</height>
+        <y>20</y>
+        <width>150</width>
+        <height>35</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>30</pointsize>
+        <bold>true</bold>
+        <underline>true</underline>
+        <kerning>true</kerning>
+       </font>
       </property>
       <property name="text">
        <string>APUR</string>
+      </property>
+     </widget>
+     <widget class="QScrollArea" name="scrollable_apur">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>75</y>
+        <width>591</width>
+        <height>421</height>
+       </rect>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>589</width>
+         <height>419</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QLabel" name="label_apur_saved_status">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>522</y>
+        <width>161</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>15</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLabel{
+	color: #37ba1e
+}</string>
+      </property>
+      <property name="text">
+       <string>Saved!</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="button_apur_save">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>520</y>
+        <width>110</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    background-color: #181818;
+    color: #e6e6e6;
+    border: 1px solid #cccccc; 
+    border-radius: 5px; 
+    padding: 7px 10px;
+}
+
+QPushButton:hover {
+    background-color: #404040;
+}
+
+QPushButton:pressed {
+    background-color: #010101;
+}
+
+QPushButton:disabled {
+    background-color: #282828;
+    color: #888888; 
+}</string>
+      </property>
+      <property name="text">
+       <string>Save</string>
       </property>
      </widget>
     </widget>
@@ -481,7 +587,7 @@ QPushButton:pressed {
        <string>Set Today</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="button_save">
+     <widget class="QPushButton" name="button_setting_save">
       <property name="enabled">
        <bool>false</bool>
       </property>
@@ -528,7 +634,7 @@ QPushButton:disabled {
        <string>Save</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_saved_status">
+     <widget class="QLabel" name="label_setting_saved_status">
       <property name="enabled">
        <bool>true</bool>
       </property>

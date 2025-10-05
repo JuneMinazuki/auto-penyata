@@ -22,6 +22,8 @@ set(PROJECT_SOURCES
         src/jsonmanager.h
         src/setting.cpp
         src/setting.h
+        src/apur.cpp
+        src/apur.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "setting.h"
+#include "apur.h"
 
 #include <QApplication>
 #include <QMainWindow>
@@ -28,6 +29,7 @@ private:
     Ui::MainWindow *ui;
 
     // Pages
+    Apur apurPage;
     Setting settingPage;
 
     //VARIABLE

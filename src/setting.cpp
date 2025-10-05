@@ -8,12 +8,12 @@ void Setting::handleSettingActivation(Ui::MainWindow *m_ui)
     qDebug() << "Switched to page: Setting";
     loadJson();
     
-    ui->label_saved_status->setVisible(false); // Hide save label
+    ui->label_setting_saved_status->setVisible(false); // Hide save label
     ui->label_reset_status->setVisible(false); // Hide reset label
-    ui->button_save->setEnabled(false); // Disable save button
+    ui->button_setting_save->setEnabled(false); // Disable save button
     
     // Button
-    connect(ui->button_save, &QPushButton::clicked, this, &Setting::handleSaveButtonClick); // Save button
+    connect(ui->button_setting_save, &QPushButton::clicked, this, &Setting::handleSaveButtonClick); // Save button
     connect(ui->button_reset, &QPushButton::clicked, this, &Setting::handleResetButtonClick); // Reset button
     connect(ui->button_setToday, &QPushButton::clicked, this, &Setting::handleSetTodayButtonClick); // setToday button
 
@@ -72,19 +72,19 @@ void Setting::handleSaveButtonClick()
     };
 
     if (JsonManager::writeJson("setting.json", settingsMap)) {
-        ui->label_saved_status->setText("Saved!");
-        ui->label_saved_status->setStyleSheet("QLabel { color : #37ba1e }");
+        ui->label_setting_saved_status->setText("Saved!");
+        ui->label_setting_saved_status->setStyleSheet("QLabel { color : #37ba1e }");
 
         // Disable save button
         initialCompanyName = ui->input_company_name->text();
         initialDate = ui->input_date->date();
-        ui->button_save->setEnabled(false);
+        ui->button_setting_save->setEnabled(false);
     } else {
-        ui->label_saved_status->setText("Failed to save!");
-        ui->label_saved_status->setStyleSheet("QLabel { color : #e21717 }");
+        ui->label_setting_saved_status->setText("Failed to save!");
+        ui->label_setting_saved_status->setStyleSheet("QLabel { color : #e21717 }");
     }
 
-    ui->label_saved_status->setVisible(true);
+    ui->label_setting_saved_status->setVisible(true);
 }
 
 // When user press Reset button
@@ -120,5 +120,5 @@ void Setting::checkForChanges()
     bool changed = (ui->input_company_name->text() != initialCompanyName) || (ui->input_date->date() != initialDate);
 
     // Enable or disable the Save button
-    ui->button_save->setEnabled(changed);
+    ui->button_setting_save->setEnabled(changed);
 }
