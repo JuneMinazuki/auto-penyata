@@ -174,12 +174,12 @@ QListWidget::item:selected {
         <x>30</x>
         <y>75</y>
         <width>591</width>
-        <height>421</height>
+        <height>461</height>
        </rect>
       </property>
       <property name="styleSheet">
        <string notr="true">QScrollArea {
-	border: 0px;
+	border: none;
     background-color: #333333;
 }
 
@@ -226,13 +226,13 @@ QScrollBar:horizontal {
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
+      <widget class="QWidget" name="apur_scrollAreaWidgetContents">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
          <width>591</width>
-         <height>421</height>
+         <height>461</height>
         </rect>
        </property>
       </widget>
@@ -244,7 +244,7 @@ QScrollBar:horizontal {
       <property name="geometry">
        <rect>
         <x>170</x>
-        <y>522</y>
+        <y>552</y>
         <width>161</width>
         <height>31</height>
        </rect>
@@ -271,7 +271,7 @@ QScrollBar:horizontal {
       <property name="geometry">
        <rect>
         <x>40</x>
-        <y>520</y>
+        <y>550</y>
         <width>110</width>
         <height>35</height>
        </rect>
@@ -714,7 +714,7 @@ QPushButton:disabled {
       <property name="geometry">
        <rect>
         <x>40</x>
-        <y>520</y>
+        <y>550</y>
         <width>110</width>
         <height>35</height>
        </rect>
@@ -756,7 +756,7 @@ QPushButton:pressed {
       <property name="geometry">
        <rect>
         <x>170</x>
-        <y>522</y>
+        <y>552</y>
         <width>281</width>
         <height>31</height>
        </rect>

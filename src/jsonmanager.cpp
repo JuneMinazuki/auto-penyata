@@ -253,23 +253,3 @@ bool JsonManager::resetJSON()
     initialJsonSetup();
     return allFilesRemoved;
 }
-
-// Get display name with spaces
-QString JsonManager::getDisplayName(const QString& internalKey)
-{
-    static const QMap<QString, QString> keyMap = {
-        {"Jualan", "Jualan"},
-        {"Belian", "Belian"},
-        {"PulanganJualan", "Pulangan Jualan"},
-        {"PulanganBelian", "Pulangan Belian"},
-        {"InventoriAwal", "Inventori Awal"},
-        {"InventoriAkhir", "Inventori Akhir"},
-        {"AngkutanMasuk", "Angkutan Masuk"},
-        {"UpahAtasBelian", "Upah Atas Belian"},
-        {"DutiImport", "Duti Import"},
-        {"InsuransAtasBelian", "Insurans Atas Belian"}
-    };
-
-    // Look up the display name. If not found, return the key as is.
-    return keyMap.value(internalKey, internalKey);
-}

@@ -84,6 +84,7 @@ void Setting::handleSaveButtonClick()
         ui->label_setting_saved_status->setStyleSheet("QLabel { color : #e21717 }");
     }
 
+    ui->label_reset_status->setVisible(false);
     ui->label_setting_saved_status->setVisible(true);
 }
 
@@ -102,6 +103,7 @@ void Setting::handleResetButtonClick()
         ui->label_reset_status->setStyleSheet("QLabel { color : #e21717 }");
     }
 
+    ui->label_setting_saved_status->setVisible(false);
     ui->label_reset_status->setVisible(true);
     loadJson();
 }

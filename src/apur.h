@@ -18,7 +18,11 @@ private:
     Ui::MainWindow *ui = nullptr; 
 
     // Read from Json
-    void loadJson();
+    QVariantMap loadJson();
+
+    // Create account blocks
+    void createJsonBlocks(const QVariantMap &variantMap);
+    QWidget* createBlock(const QString &key, QString value);
 
 };
 #endif // APUR_H

@@ -27,9 +27,6 @@ public:
     // Reset JSON
     static bool resetJSON();
 
-    // Display data
-    static QString getDisplayName(const QString& internalKey);
-
 private :
     // Helper methods to get the correct JSON paths
     static QString getAppFilePath(const QString& fileName);
