@@ -128,14 +128,14 @@ void JsonManager::initialJsonSetup()
         {"apur.json", {
             {"Jualan", 0.0},
             {"Belian", 0.0},
-            {"PulanganJualan", 0.0},
-            {"PulanganBelian", 0.0},
-            {"InventoriAwal", 0.0},
-            {"InventoriAkhir", 0.0},
-            {"AngkutanMasuk", 0.0},
-            {"UpahAtasBelian", 0.0},
-            {"DutiImport", 0.0},
-            {"InsuransAtasBelian", 0.0}
+            {"Pulangan Jualan", 0.0},
+            {"Pulangan Belian", 0.0},
+            {"Inventori Awal", 0.0},
+            {"Inventori Akhir", 0.0},
+            {"Angkutan Masuk", 0.0},
+            {"Upah Atas Belian", 0.0},
+            {"Duti Import", 0.0},
+            {"Insurans Atas Belian", 0.0}
         }},
 
         {"belanja.json", {
@@ -153,8 +153,8 @@ void JsonManager::initialJsonSetup()
         {"aset_semasa.json", {
             {"Tunai", 0.0},
             {"Bank", 0.0},
-            {"AkaunBelumTerima", 0.0},
-            {"PeruntukanHutangRagu", 0.0},
+            {"Akaun Belum Terima", 0.0},
+            {"Peruntukan Hutang Ragu", 0.0},
             {"CustomAccounts", QVariantMap{}} 
         }},
 
@@ -163,12 +163,12 @@ void JsonManager::initialJsonSetup()
         }},
 
         {"liabiliti_semasa.json", {
-            {"AkaunBelumBayar", 0.0},
+            {"Akaun Belum Bayar", 0.0},
             {"CustomAccounts", QVariantMap{}} 
         }},
 
         {"ekuiti_pemilik.json", {
-            {"ModalAwal", 0.0},
+            {"Modal Awal", 0.0},
             {"Ambilan", 0.0},
         }},
 
