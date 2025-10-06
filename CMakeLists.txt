@@ -13,17 +13,10 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
-set(PROJECT_SOURCES
-        src/main.cpp
-        src/mainwindow.cpp
-        src/mainwindow.h
-        src/mainwindow.ui
-        src/jsonmanager.cpp
-        src/jsonmanager.h
-        src/setting.cpp
-        src/setting.h
-        src/apur.cpp
-        src/apur.h
+file(GLOB PROJECT_SOURCES
+    "src/*.cpp"
+    "src/*.h"
+    "src/*.ui"
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

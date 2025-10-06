@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Default page
     ui->MainScreen->setCurrentIndex(0);
-    apurPage.handleApurActivation(ui);
+    m_apurPage = new Apur(ui, this); 
 
     // Setup JSON (if applicable)
     JsonManager::initialJsonSetup();
@@ -67,7 +67,9 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
 
         switch (index) {
             case 0: // APUR
-                apurPage.handleApurActivation(ui);
+                if (m_apurPage) {
+                    m_apurPage->refreshApurData();
+                }
                 break;
             case 1: // Belanja
                 break;

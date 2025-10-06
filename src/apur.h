@@ -1,28 +1,36 @@
 #ifndef APUR_H
 #define APUR_H 
 
-#include <QObject>
-#include "./ui_mainwindow.h"
+#include "blockmanager.h"
+
+#include <memory>
+
+QT_BEGIN_NAMESPACE
+namespace Ui {
+class MainWindow;
+}
+QT_END_NAMESPACE
 
 class Apur : public QObject
 {
     Q_OBJECT
     
 public:
+    explicit Apur(Ui::MainWindow *m_ui, QObject *parent = nullptr); 
+
     // When Apur page is open
-    void handleApurActivation(Ui::MainWindow *ui);
+    void refreshApurData();
 
 private slots:
 
 private:
     Ui::MainWindow *ui = nullptr; 
+    std::unique_ptr<BlockManager> m_blockManager; 
+
+    // Desired order of blocksx
+    QStringList desiredOrder;
 
     // Read from Json
     QVariantMap loadJson();
-
-    // Create account blocks
-    void createJsonBlocks(const QVariantMap &variantMap);
-    QWidget* createBlock(const QString &key, QString value);
-
 };
 #endif // APUR_H

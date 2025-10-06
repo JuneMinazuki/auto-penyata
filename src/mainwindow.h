@@ -29,7 +29,7 @@ private:
     Ui::MainWindow *ui;
 
     // Pages
-    Apur apurPage;
+    Apur *m_apurPage = nullptr; 
     Setting settingPage;
 
     //VARIABLE
