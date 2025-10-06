@@ -21,6 +21,9 @@ void BlockManager::createAccountBlocks(const QVariantMap &variantMap, QStringLis
     // Area to put all account block
     QWidget *contentWidget = m_ui->apur_scrollAreaWidgetContents;
 
+    // Clear the list of input fields and their initial values before creating new ones
+    m_accountValueInputs.clear(); 
+
     // Check if the content widget exists and has a layout. If not, create a new layout
     QVBoxLayout *mainLayout = qobject_cast<QVBoxLayout*>(contentWidget->layout());
     if (!mainLayout) {
@@ -76,7 +79,6 @@ QWidget* BlockManager::createBasicBlock(const QString &key, QString value)
     blockFrame->setFrameShape(QFrame::StyledPanel);
     blockFrame->setLineWidth(1);
     blockFrame->setMidLineWidth(0);
-
     blockFrame->setStyleSheet("QFrame {background-color: #262626; border: 1px solid #e6e6e6; border-radius: 3px;}");
 
     // Horizontal layout for the key and value
@@ -85,10 +87,7 @@ QWidget* BlockManager::createBasicBlock(const QString &key, QString value)
     // Display account name on the left
     QLabel *keyLabel = new QLabel(key);
     keyLabel->setFont(QFont("Arial", 16, QFont::Bold));
-
-    keyLabel->setStyleSheet(
-        "QLabel {background-color: #262626; color: #E2E8F0; border: none; padding-left: 10px;}"
-    );
+    keyLabel->setStyleSheet("QLabel {background-color: #262626; color: #E2E8F0; border: none; padding-left: 10px;}");
 
     // Display account amount on the right in a QLineEdit
     QLineEdit *valueEdit = new QLineEdit;
@@ -97,7 +96,7 @@ QWidget* BlockManager::createBasicBlock(const QString &key, QString value)
 
     // Check for 2 decimal places input
     QRegularExpressionValidator *validator = new QRegularExpressionValidator(
-        QRegularExpression("^\\d+(\\.\\d{0,2})?$"), valueEdit
+        QRegularExpression("^\\d*(\\.\\d{0,2})?$"), valueEdit
     );
     valueEdit->setValidator(validator);
 
@@ -105,6 +104,14 @@ QWidget* BlockManager::createBasicBlock(const QString &key, QString value)
         "QLineEdit {background-color: #181818; color: #E2E8F0; border: none; padding: 5px;"
                     "min-width: 120px; border-radius: 2px; font-size: 16px;}"
     );
+    // Connect the QLineEdit to the BlockManager's internal slot for change detection
+    connect(valueEdit, &QLineEdit::textEdited, this, &BlockManager::checkForValueChanges);
+
+    // Reformat the text when the user is finished editing
+    connect(valueEdit, &QLineEdit::editingFinished, this, &BlockManager::reformatValueOnFinish);
+
+    // Store the initial value in the map
+    m_accountValueInputs.insert(valueEdit, value);
 
     // Add widgets to the layout
     blockLayout->addWidget(keyLabel, 1);     // keyLabel takes a larger stretch factor
@@ -116,4 +123,61 @@ QWidget* BlockManager::createBasicBlock(const QString &key, QString value)
     blockFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     return blockFrame;
+}
+
+// Returns true if any QLineEdit's current value is different from its stored initial value
+bool BlockManager::hasBlockValuesChanged() const
+{
+    for (auto it = m_accountValueInputs.constBegin(); it != m_accountValueInputs.constEnd(); ++it)
+    {
+        QLineEdit *lineEdit = it.key();
+        const QString &initialValue = it.value();
+        
+        // Compare the current text with the stored initial value
+        if (lineEdit->text() != initialValue)
+        {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+// Slot to catch the QLineEdit::textEdited signal
+void BlockManager::checkForValueChanges()
+{
+    // A change has occurred in one of the blocks. 
+    emit blockValueChanged(); 
+}
+
+// Slot to reformat the QLineEdit value when editing is finished
+void BlockManager::reformatValueOnFinish()
+{
+    QLineEdit *valueEdit = qobject_cast<QLineEdit*>(sender());
+    if (!valueEdit)
+        return;
+
+    // Get the current text and attempt conversion
+    QString currentText = valueEdit->text();
+    bool ok;
+    double value = QLocale().toDouble(currentText, &ok);
+    
+    // Check the initial stored value for the fallback
+    QString initialValue = m_accountValueInputs.value(valueEdit);
+
+    if (ok) {        
+        // Format the double with 2 decimal places
+        QString formattedValue = QString::asprintf("%.02f", value);
+
+        // Set the formatted text back to the QLineEdit
+        valueEdit->setText(formattedValue);
+        
+    } else {        
+        // Reset the QLineEdit text to its last known good value
+        if (!initialValue.isNull() && !initialValue.isEmpty()) {
+            valueEdit->setText(initialValue);
+        } else {
+            valueEdit->setText("0.00");
+        }
+    }
 }

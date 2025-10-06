@@ -16,7 +16,21 @@ public:
     // Creates visual blocks for each item in the variant map from Json
     void createAccountBlocks(const QVariantMap &variantMap, QStringList desiredOrder, Ui::MainWindow *ui);
 
+    // Check for value changes
+    bool hasBlockValuesChanged() const;
+
+signals:
+    // Notify Main Window that a block value has changed
+    void blockValueChanged();
+
+private slots:
+    void checkForValueChanges();
+    void reformatValueOnFinish();
+
 private:
+    // Stores the QLineEdit pointer and its original value
+    QHash<QLineEdit*, QString> m_accountValueInputs; 
+
     // Create each block
     QWidget* createBasicBlock(const QString &key, QString value);
 };

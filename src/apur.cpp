@@ -21,6 +21,12 @@ Apur::Apur(Ui::MainWindow *m_ui, QObject *parent)
         "Inventori Akhir"
     };
 
+    // Button
+    connect(ui->button_apur_save, &QPushButton::clicked, this, &Apur::handleSaveButtonClick); // Save button
+
+    // Check for value changes
+    connect(m_blockManager.get(), &BlockManager::blockValueChanged, this, &Apur::checkForChanges);
+
     handleApurActivation();
 }
 
@@ -28,6 +34,9 @@ Apur::Apur(Ui::MainWindow *m_ui, QObject *parent)
 void Apur::handleApurActivation()
 {
     qDebug() << "Switched to page: APUR";
+
+    ui->label_apur_saved_status->setVisible(false); // Hide save label
+    ui->button_apur_save->setEnabled(false); // Disable save button
 
     // Create accounts block
     QVariantMap jsonData = loadJson();
@@ -45,4 +54,17 @@ QVariantMap Apur::loadJson()
     }
 
     return apurs;
+}
+
+// When user press Save button
+void Apur::handleSaveButtonClick()
+{
+    ui->label_apur_saved_status->setVisible(true);
+}
+
+// Check for changes
+void Apur::checkForChanges() 
+{
+    // Enable the Save button if any change occurred
+    ui->button_apur_save->setEnabled(m_blockManager->hasBlockValuesChanged());
 }

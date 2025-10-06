@@ -2,14 +2,9 @@
 #define APUR_H 
 
 #include "blockmanager.h"
+#include "./ui_mainwindow.h"
 
 #include <memory>
-
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
-QT_END_NAMESPACE
 
 class Apur : public QObject
 {
@@ -22,6 +17,7 @@ public:
     void handleApurActivation();
 
 private slots:
+    void handleSaveButtonClick(); // Called when Save button pressed
 
 private:
     Ui::MainWindow *ui = nullptr; 
@@ -32,5 +28,8 @@ private:
 
     // Read from Json
     QVariantMap loadJson();
+
+    // Check for value changes
+    void checkForChanges();
 };
 #endif // APUR_H
