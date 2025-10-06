@@ -46,22 +46,40 @@ void Apur::createJsonBlocks(const QVariantMap &variantMap)
 
     contentWidget->setStyleSheet("QWidget#apur_scrollAreaWidgetContents {background-color: transparent; border: none;}");
 
-    for (auto it = variantMap.constBegin(); it != variantMap.constEnd(); ++it) 
+    // Desired display order of keys
+    QStringList desiredOrder = {
+        "Jualan",
+        "Pulangan Jualan",
+        "Inventori Awal",
+        "Belian",
+        "Pulangan Belian",
+        "Angkutan Masuk",
+        "Upah Atas Belian",
+        "Duti Import",
+        "Insurans Atas Belian",
+        "Inventori Akhir"
+    };
+
+    for (const QString &key : desiredOrder)
     {
-        const QString key = it.key();
-        const QVariant value = it.value(); // The value is a QVariant
+        if (variantMap.contains(key))
+        {
+            const QVariant value = variantMap.value(key);
 
-        // Check if it can be converted to a double
-        if (value.canConvert<double>()) { 
-            double doubleValue = value.toDouble(); 
+            // Check if it can be converted to a double
+            if (value.canConvert<double>()) { 
+                double doubleValue = value.toDouble(); 
 
-            // Format the value to 2 decimal places
-            QString formattedValue = QString::asprintf("%.02f", doubleValue);
+                // Format the value to 2 decimal places
+                QString formattedValue = QString::asprintf("%.02f", doubleValue);
 
-            QWidget *block = createBlock(key, formattedValue);
-            mainLayout->addWidget(block);
+                QWidget *block = createBlock(key, formattedValue);
+                mainLayout->addWidget(block);
+            } else {
+                qWarning() << "Key" << key << "has a non-numeric value or could not be converted, skipping.";
+            }
         } else {
-            qWarning() << "Key" << key << "has a non-numeric value or could not be converted, skipping.";
+            qWarning() << "Key" << key << "from desiredOrder not found in variantMap, skipping.";
         }
     }
     
