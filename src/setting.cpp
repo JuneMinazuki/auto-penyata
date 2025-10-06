@@ -1,17 +1,10 @@
 #include "setting.h"
 #include "jsonmanager.h"
 
-void Setting::handleSettingActivation(Ui::MainWindow *m_ui)
+Setting::Setting(Ui::MainWindow *m_ui, QObject *parent) 
+    : QObject(parent),
+      ui(m_ui)
 {
-    ui = m_ui;
-
-    qDebug() << "Switched to page: Setting";
-    loadJson();
-    
-    ui->label_setting_saved_status->setVisible(false); // Hide save label
-    ui->label_reset_status->setVisible(false); // Hide reset label
-    ui->button_setting_save->setEnabled(false); // Disable save button
-    
     // Button
     connect(ui->button_setting_save, &QPushButton::clicked, this, &Setting::handleSaveButtonClick); // Save button
     connect(ui->button_reset, &QPushButton::clicked, this, &Setting::handleResetButtonClick); // Reset button
@@ -21,6 +14,19 @@ void Setting::handleSettingActivation(Ui::MainWindow *m_ui)
     connect(ui->input_company_name, &QLineEdit::textEdited, this, &Setting::checkForChanges);
     connect(ui->input_date, &QDateEdit::editingFinished, this, &Setting::checkForChanges);
     connect(ui->input_date, &QDateEdit::dateChanged, this, &Setting::checkForChanges);
+
+    handleSettingActivation();
+}
+
+
+void Setting::handleSettingActivation()
+{
+    qDebug() << "Switched to page: Setting";
+    loadJson();
+    
+    ui->label_setting_saved_status->setVisible(false); // Hide save label
+    ui->label_reset_status->setVisible(false); // Hide reset label
+    ui->button_setting_save->setEnabled(false); // Disable save button
 }
 
 // Load from JSON

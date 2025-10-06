@@ -1,16 +1,19 @@
 #ifndef SETTING_H
 #define SETTING_H 
 
-#include <QObject>
 #include "./ui_mainwindow.h"
+
+#include <QObject>
 
 class Setting : public QObject
 {
     Q_OBJECT
     
 public:
+    explicit Setting(Ui::MainWindow *m_ui, QObject *parent = nullptr); 
+
     // When setting page is open
-    void handleSettingActivation(Ui::MainWindow *ui);
+    void handleSettingActivation();
 
 private slots:
     // Button
@@ -21,7 +24,7 @@ private slots:
     void checkForChanges(); // Check for value changed
 
 private:
-    Ui::MainWindow *ui = nullptr; 
+    Ui::MainWindow *ui = nullptr;
 
     // VARIABLE
     QString initialCompanyName;

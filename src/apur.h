@@ -19,7 +19,7 @@ public:
     explicit Apur(Ui::MainWindow *m_ui, QObject *parent = nullptr); 
 
     // When Apur page is open
-    void refreshApurData();
+    void handleApurActivation();
 
 private slots:
 

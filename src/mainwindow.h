@@ -30,7 +30,7 @@ private:
 
     // Pages
     Apur *m_apurPage = nullptr; 
-    Setting settingPage;
+    Setting *m_settingPage = nullptr;
 
     //VARIABLE
     static QHash<QString, int> m_pageIndexMap;

@@ -21,11 +21,11 @@ Apur::Apur(Ui::MainWindow *m_ui, QObject *parent)
         "Inventori Akhir"
     };
 
-    refreshApurData();
+    handleApurActivation();
 }
 
 // When Apur page is open
-void Apur::refreshApurData()
+void Apur::handleApurActivation()
 {
     qDebug() << "Switched to page: APUR";
 

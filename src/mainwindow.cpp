@@ -25,9 +25,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this); 
 
+    // Setup for each pages
+    m_apurPage = new Apur(ui, this);
+    m_settingPage = new Setting(ui, this);
+
     // Default page
-    ui->MainScreen->setCurrentIndex(0);
-    m_apurPage = new Apur(ui, this); 
+    ui->MainScreen->setCurrentIndex(0); 
 
     // Setup JSON (if applicable)
     JsonManager::initialJsonSetup();
@@ -68,7 +71,7 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
         switch (index) {
             case 0: // APUR
                 if (m_apurPage) {
-                    m_apurPage->refreshApurData();
+                    m_apurPage->handleApurActivation();
                 }
                 break;
             case 1: // Belanja
@@ -86,7 +89,9 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
             case 7: // Ekuiti Pemilik
                 break;
             case 8: // Setting
-                settingPage.handleSettingActivation(ui);
+                if (m_settingPage) {
+                    m_settingPage->handleSettingActivation();
+                }
                 break;
             case 9: // Export PDF
                 break;
