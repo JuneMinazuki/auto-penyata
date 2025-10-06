@@ -18,7 +18,6 @@ Setting::Setting(Ui::MainWindow *m_ui, QObject *parent)
     handleSettingActivation();
 }
 
-
 void Setting::handleSettingActivation()
 {
     qDebug() << "Switched to page: Setting";
@@ -50,13 +49,13 @@ void Setting::loadJson()
     // Find "Date"
     if (settings.contains("Date")) {
         QString dateString = settings["Date"].toString();
-        QDate date = QDate::fromString(dateString, "dd/MM/yyyy");
+        QDate date = QDate::fromString(dateString, "yyyy-MM-dd");
 
         // Check if the conversion was successful
         if (date.isValid()) {
             initialDate = date;
         } else {
-            qWarning() << "Date string '" << dateString << "' is not in the expected format (DD/MM/YYYY).";
+            qWarning() << "Date string '" << dateString << "' is not in the expected format (YYYY/MM/DD).";
             initialDate = QDate::currentDate();
         }
     } else {
@@ -69,7 +68,7 @@ void Setting::loadJson()
     ui->input_date->setDate(initialDate);
 }
 
-// When user press Reset button
+// When user press Save button
 void Setting::handleSaveButtonClick()
 {
     QVariantMap settingsMap{
