@@ -71,7 +71,7 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
         switch (index) {
             case 0: // APUR
                 if (m_apurPage) {
-                    m_apurPage->handleApurActivation();
+                    m_apurPage->handlePageActivation();
                 }
                 break;
             case 1: // Belanja

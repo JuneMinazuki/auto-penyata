@@ -3,10 +3,13 @@
 #include "blockmanager.h"
 
 Apur::Apur(Ui::MainWindow *m_ui, QObject *parent) 
-    : QObject(parent),
-      ui(m_ui),
-      m_blockManager(std::make_unique<BlockManager>(nullptr))
+    : PageManager(m_ui, parent, std::make_unique<BlockManager>(nullptr))
 {
+    // Page initailsation
+    fileName = "apur.json";
+    saveButton = ui->button_apur_save;
+    saveLabel = ui->label_apur_saved_status;
+
     // Desired display order of keys
     desiredOrder = {
         "Jualan",
@@ -22,38 +25,25 @@ Apur::Apur(Ui::MainWindow *m_ui, QObject *parent)
     };
 
     // Button
-    connect(ui->button_apur_save, &QPushButton::clicked, this, &Apur::handleSaveButtonClick); // Save button
+    connect(saveButton, &QPushButton::clicked, this, &Apur::handleSaveButtonClick); // Save button
 
     // Check for value changes
     connect(m_blockManager.get(), &BlockManager::blockValueChanged, this, &Apur::checkForChanges);
 
-    handleApurActivation();
+    handlePageActivation();
 }
 
 // When Apur page is open
-void Apur::handleApurActivation()
+void Apur::handlePageActivation()
 {
     qDebug() << "Switched to page: APUR";
 
-    ui->label_apur_saved_status->setVisible(false); // Hide save label
-    ui->button_apur_save->setEnabled(false); // Disable save button
+    saveLabel->setVisible(false); // Hide save label
+    saveButton->setEnabled(false); // Disable save button
 
     // Create accounts block
-    QVariantMap jsonData = loadJson();
+    QVariantMap jsonData = loadJson(fileName);
     m_blockManager->createAccountBlocks(jsonData, desiredOrder, ui);
-}
-
-// Load from JSON
-QVariantMap Apur::loadJson()
-{
-    QVariantMap apurs = JsonManager::readJson("apur.json");
-
-    if (apurs.isEmpty()) {
-        qWarning() << "apur.json is empty. Cannot load value";
-        return QVariantMap();
-    }
-
-    return apurs;
 }
 
 // When user press Save button
@@ -63,28 +53,20 @@ void Apur::handleSaveButtonClick()
     QVariantMap changedData = m_blockManager->getEditedValueMap();
 
     // Save the changed data to JSON
-    const QString jsonFile = "apur.json";
-    bool success = JsonManager::updateJson(jsonFile, changedData);
+    bool success = JsonManager::updateJson(fileName, changedData);
 
     if (success) {
         // Update the original data
         m_blockManager->updateCurrentValue();
 
-        ui->button_apur_save->setEnabled(false);
+        saveButton->setEnabled(false);
 
-        ui->label_apur_saved_status->setText("Saved!");
-        ui->label_apur_saved_status->setStyleSheet("QLabel { color : #37ba1e }");
+        saveLabel->setText("Saved!");
+        saveLabel->setStyleSheet("QLabel { color : #37ba1e }");
     } else {
-        ui->label_apur_saved_status->setText("Failed to save!");
-        ui->label_apur_saved_status->setStyleSheet("QLabel { color : #e21717 }");
+        saveLabel->setText("Failed to save!");
+        saveLabel->setStyleSheet("QLabel { color : #e21717 }");
     }
 
-    ui->label_apur_saved_status->setVisible(true);
-}
-
-// Check for changes
-void Apur::checkForChanges() 
-{
-    // Enable the Save button if any change occurred
-    ui->button_apur_save->setEnabled(m_blockManager->hasBlockValuesChanged());
+    saveLabel->setVisible(true);
 }
