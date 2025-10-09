@@ -9,17 +9,13 @@ BlockManager::BlockManager(QObject *parent)
 }
 
 // Creates visual blocks for each item in the variant map from Json
-void BlockManager::createAccountBlocks(const QVariantMap &variantMap, QStringList desiredOrder, Ui::MainWindow *m_ui)
+void BlockManager::createAccountBlocks(const QVariantMap &variantMap, QStringList desiredOrder,
+                                       Ui::MainWindow *m_ui, QScrollArea *scrollArea, QWidget *contentWidget)
 {
-    QScrollArea *scrollArea = m_ui->scrollable_apur;
-
     if (!scrollArea) {
-        qCritical() << "Error: QScrollArea 'scrollable_apurs' not found in UI file.";
+        qCritical() << "Error: QScrollArea not found in UI file.";
         return;
     }
-
-    // Area to put all account block
-    QWidget *contentWidget = m_ui->apur_scrollAreaWidgetContents;
 
     // Clear the list of input fields and their initial values before creating new ones
     m_accountValueInputs.clear(); 
@@ -40,8 +36,6 @@ void BlockManager::createAccountBlocks(const QVariantMap &variantMap, QStringLis
             delete item;
         }
     }
-
-    contentWidget->setStyleSheet("QWidget#apur_scrollAreaWidgetContents {background-color: transparent; border: none;}");
 
     for (const QString &key : desiredOrder)
     {

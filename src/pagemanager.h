@@ -26,6 +26,8 @@ protected:
     QString fileName; // Json file name
     QPushButton* saveButton; // Save button
     QLabel* saveLabel; // Save status label
+    QScrollArea* scrollArea; // Scrollable area
+    QWidget *contentWidget; // Area to put all account block
 
     // Desired order of blocks
     QStringList desiredOrder;

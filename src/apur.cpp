@@ -9,6 +9,8 @@ Apur::Apur(Ui::MainWindow *m_ui, QObject *parent)
     fileName = "apur.json";
     saveButton = ui->button_apur_save;
     saveLabel = ui->label_apur_saved_status;
+    scrollArea = ui->scrollable_apur;
+    contentWidget = ui->apur_scrollAreaWidgetContents;
 
     // Desired display order of keys
     desiredOrder = {
@@ -43,7 +45,7 @@ void Apur::handlePageActivation()
 
     // Create accounts block
     QVariantMap jsonData = loadJson(fileName);
-    m_blockManager->createAccountBlocks(jsonData, desiredOrder, ui);
+    m_blockManager->createAccountBlocks(jsonData, desiredOrder, ui, scrollArea, contentWidget);
 }
 
 // When user press Save button

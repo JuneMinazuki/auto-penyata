@@ -99,20 +99,28 @@ bool JsonManager::writeJson(const QString& fileName, const QVariantMap& datas)
 }
 
 /**
- * @brief Overwrite existing key in QVariantMap to a JSON file
- *
+ * @brief Overwrite existing key in QVariantMap to a JSON file, or "__KEY_TO_DELETE__" to delete a key
  * @param fileName The name of the JSON file to write
  * @param datas The map of datas to save
  * @return true if the write was successful, false otherwise
  */
 bool JsonManager::updateJson(const QString& fileName, const QVariantMap& datas)
 {
+    // Define the sentinel value that indicates a key should be deleted
+    const QVariant DELETE_SENTINEL = QVariant("__KEY_TO_DELETE__");
+
     // Read existing data from json
     QVariantMap existingData = readJson(fileName);
 
-    // Overwrite new data into the existing data
+    // Process the new data: overwrite, add, or delete keys
     for (auto it = datas.constBegin(); it != datas.constEnd(); ++it) {
-        existingData[it.key()] = it.value();
+        if (it.value() == DELETE_SENTINEL) {
+            // Delete the key
+            existingData.remove(it.key());
+        } else {
+            // Overwrite or add the key-value pair
+            existingData[it.key()] = it.value();
+        }
     }
 
     // Update Json with key value

@@ -14,7 +14,7 @@ public:
     explicit BlockManager(QObject *parent = nullptr);
 
     // Creates visual blocks for each item in the variant map from Json
-    void createAccountBlocks(const QVariantMap &variantMap, QStringList desiredOrder, Ui::MainWindow *ui);
+    void createAccountBlocks(const QVariantMap &variantMap, QStringList desiredOrder, Ui::MainWindow *m_ui, QScrollArea *scrollArea, QWidget *contentWidget);
 
     // Check for value changes
     bool hasBlockValuesChanged() const;
