@@ -23,11 +23,17 @@ private:
     Ui::MainWindow *ui = nullptr; 
     std::unique_ptr<BlockManager> m_blockManager; 
 
+    // Original data
+    QVariantMap m_originalData;
+
     // Desired order of blocksx
     QStringList desiredOrder;
 
     // Read from Json
     QVariantMap loadJson();
+
+    // Get current data
+    QVariantMap getCurrentData();
 
     // Check for value changes
     void checkForChanges();

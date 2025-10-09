@@ -143,7 +143,7 @@ QListWidget::item:selected {
 }</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>8</number>
     </property>
     <widget class="QWidget" name="APUR">
      <widget class="QLabel" name="label_apur">
@@ -489,6 +489,9 @@ QPushButton:disabled {
         <width>125</width>
         <height>35</height>
        </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::FocusPolicy::NoFocus</enum>
       </property>
       <property name="styleSheet">
        <string notr="true">QDateEdit {

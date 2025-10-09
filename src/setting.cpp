@@ -14,8 +14,6 @@ Setting::Setting(Ui::MainWindow *m_ui, QObject *parent)
     connect(ui->input_company_name, &QLineEdit::textEdited, this, &Setting::checkForChanges);
     connect(ui->input_date, &QDateEdit::editingFinished, this, &Setting::checkForChanges);
     connect(ui->input_date, &QDateEdit::dateChanged, this, &Setting::checkForChanges);
-
-    handleSettingActivation();
 }
 
 void Setting::handleSettingActivation()

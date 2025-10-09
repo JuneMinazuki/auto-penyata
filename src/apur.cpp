@@ -59,6 +59,26 @@ QVariantMap Apur::loadJson()
 // When user press Save button
 void Apur::handleSaveButtonClick()
 {
+    // Get current settings from the UI
+    QVariantMap changedData = m_blockManager->getEditedValueMap();
+
+    // Save the changed data to JSON
+    const QString jsonFile = "apur.json";
+    bool success = JsonManager::updateJson(jsonFile, changedData);
+
+    if (success) {
+        // Update the original data
+        m_blockManager->updateCurrentValue();
+
+        ui->button_apur_save->setEnabled(false);
+
+        ui->label_apur_saved_status->setText("Saved!");
+        ui->label_apur_saved_status->setStyleSheet("QLabel { color : #37ba1e }");
+    } else {
+        ui->label_apur_saved_status->setText("Failed to save!");
+        ui->label_apur_saved_status->setStyleSheet("QLabel { color : #e21717 }");
+    }
+
     ui->label_apur_saved_status->setVisible(true);
 }
 

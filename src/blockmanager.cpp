@@ -71,7 +71,7 @@ void BlockManager::createAccountBlocks(const QVariantMap &variantMap, QStringLis
     scrollArea->setWidget(contentWidget);
 }
 
-// Create each block
+// Create one block
 QWidget* BlockManager::createBasicBlock(const QString &key, QString value)
 {
     // Create a container widget for the block
@@ -91,6 +91,7 @@ QWidget* BlockManager::createBasicBlock(const QString &key, QString value)
 
     // Display account amount on the right in a QLineEdit
     QLineEdit *valueEdit = new QLineEdit;
+    valueEdit->setObjectName(key);
     valueEdit->setText(value);
     valueEdit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
@@ -148,6 +149,43 @@ void BlockManager::checkForValueChanges()
 {
     // A change has occurred in one of the blocks. 
     emit blockValueChanged(); 
+}
+
+// Returns a map of account and it's current value
+QVariantMap BlockManager::getEditedValueMap() const
+{
+    QVariantMap editedMap;
+
+    for (auto it = m_accountValueInputs.constBegin(); it != m_accountValueInputs.constEnd(); ++it)
+    {
+        QLineEdit *lineEdit = it.key();
+        const QString &initialValue = it.value();
+
+        // Ensure the QLineEdit has a unique objectName set
+        QString keyName = lineEdit->objectName();
+        if (keyName.isEmpty()) {
+            qWarning() << "ERROR: Emtpy keyName found!";
+            continue; 
+        }
+
+        // Compare the current text with the stored initial value
+        if (lineEdit->text() != initialValue)
+        {
+            editedMap.insert(keyName, lineEdit->text());
+        }
+    }
+
+    return editedMap;
+}
+
+// Update initial value
+void BlockManager::updateCurrentValue()
+{
+    for (auto it = m_accountValueInputs.begin(); it != m_accountValueInputs.end(); ++it)
+    {
+        QLineEdit *lineEdit = it.key();
+        it.value() = lineEdit->text();
+    }
 }
 
 // Slot to reformat the QLineEdit value when editing is finished

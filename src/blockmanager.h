@@ -19,6 +19,12 @@ public:
     // Check for value changes
     bool hasBlockValuesChanged() const;
 
+    // Returns a map of account and it's current value
+    QVariantMap getEditedValueMap() const;
+
+    // Update intial value
+    void updateCurrentValue();
+
 signals:
     // Notify Main Window that a block value has changed
     void blockValueChanged();
