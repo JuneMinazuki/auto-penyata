@@ -37,10 +37,12 @@ void BlockManager::createAccountBlocks(const QVariantMap &variantMap, QStringLis
         }
     }
 
+    QSet<QString> processedKeys;
     for (const QString &key : desiredOrder)
     {
         if (variantMap.contains(key))
         {
+            processedKeys.insert(key);
             const QVariant value = variantMap.value(key);
 
             // Check if it can be converted to a double
@@ -50,13 +52,34 @@ void BlockManager::createAccountBlocks(const QVariantMap &variantMap, QStringLis
                 // Format the value to 2 decimal places
                 QString formattedValue = QString::asprintf("%.02f", doubleValue);
 
+                // Use the standard block creation
                 QWidget *block = createBasicBlock(key, formattedValue);
                 mainLayout->addWidget(block);
             } else {
                 qWarning() << "Key" << key << "has a non-numeric value or could not be converted, skipping.";
             }
-        } else {
-            qWarning() << "Key" << key << "from desiredOrder not found in variantMap, skipping.";
+        }
+    }
+
+    QMapIterator<QString, QVariant> i(variantMap);
+    while (i.hasNext()) {
+        i.next();
+        const QString key = i.key();
+        const QVariant value = i.value();
+
+        // If the key hasn't been processed in the desiredOrder loop
+        if (!processedKeys.contains(key))
+        {
+            if (value.canConvert<double>()) {
+                double doubleValue = value.toDouble();
+                QString formattedValue = QString::asprintf("%.02f", doubleValue);
+
+                // Use the new block creation for deletable items
+                QWidget *block = createDeletableBlock(key, formattedValue); 
+                mainLayout->addWidget(block);
+            } else {
+                qWarning() << "Key" << key << "has a non-numeric value or could not be converted, skipping.";
+            }
         }
     }
 
@@ -65,7 +88,7 @@ void BlockManager::createAccountBlocks(const QVariantMap &variantMap, QStringLis
     scrollArea->setWidget(contentWidget);
 }
 
-// Create one block
+// Create basic block
 QWidget* BlockManager::createBasicBlock(const QString &key, QString value)
 {
     // Create a container widget for the block
@@ -111,6 +134,85 @@ QWidget* BlockManager::createBasicBlock(const QString &key, QString value)
     // Add widgets to the layout
     blockLayout->addWidget(keyLabel, 1);     // keyLabel takes a larger stretch factor
     blockLayout->addWidget(valueEdit, 0);    // valueEdit takes minimal space
+
+    // Set an appropriate minimum height for the block
+    blockFrame->setMinimumHeight(60);
+    // Ensure the block takes up the full width
+    blockFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    return blockFrame;
+}
+
+// Create block with a delete button
+QWidget* BlockManager::createDeletableBlock(const QString &key, QString value)
+{
+    // Create a container widget for the block
+    QFrame *blockFrame = new QFrame;
+    blockFrame->setFrameShape(QFrame::StyledPanel);
+    blockFrame->setLineWidth(1);
+    blockFrame->setMidLineWidth(0);
+    blockFrame->setStyleSheet("QFrame {background-color: #262626; border: 1px solid #e6e6e6; border-radius: 3px;}");
+
+    // Horizontal layout for the key and value
+    QHBoxLayout *blockLayout = new QHBoxLayout(blockFrame);
+
+    // Display account name on the left
+    QLabel *keyLabel = new QLabel(key);
+    keyLabel->setFont(QFont("Arial", 16, QFont::Bold));
+    keyLabel->setStyleSheet("QLabel {background-color: #262626; color: #E2E8F0; border: none; padding-left: 10px;}");
+
+    // Display account amount on the right in a QLineEdit
+    QLineEdit *valueEdit = new QLineEdit;
+    valueEdit->setObjectName(key);
+    valueEdit->setText(value);
+    valueEdit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    
+    // Check for 2 decimal places input
+    QRegularExpressionValidator *validator = new QRegularExpressionValidator(
+        QRegularExpression("^\\d*(\\.\\d{0,2})?$"), valueEdit
+    );
+    valueEdit->setValidator(validator);
+
+    valueEdit->setStyleSheet(
+        "QLineEdit {background-color: #181818; color: #E2E8F0; border: none; padding: 5px;"
+                    "min-width: 120px; border-radius: 2px; font-size: 16px;}"
+    );
+    // Connect the QLineEdit to the BlockManager's internal slot for change detection
+    connect(valueEdit, &QLineEdit::textEdited, this, &BlockManager::checkForValueChanges);
+
+    // Reformat the text when the user is finished editing
+    connect(valueEdit, &QLineEdit::editingFinished, this, &BlockManager::reformatValueOnFinish);
+
+    // Store the initial value in the map
+    m_accountValueInputs.insert(valueEdit, value);
+
+    // Delete button
+    QPushButton *deleteButton = new QPushButton("X", blockFrame);
+    deleteButton->setFixedSize(30, 30);
+    deleteButton->setFont(QFont("Arial", 14, QFont::Bold));
+    deleteButton->setStyleSheet("QPushButton {background-color: #550404; color: #e6e6e6; border: 1px solid #cccccc; border-radius: 5px;}"
+                                "QPushButton:hover {background-color: #990505;}"
+                                "QPushButton:pressed {background-color: #4c0808;}"
+    );
+    
+    // Connect the button to a slot to delete the block
+    connect(deleteButton, &QPushButton::clicked, this, [blockFrame, key, this]() {
+        // Remove the QLineEdit from the tracking map
+        QLineEdit *lineEdit = blockFrame->findChild<QLineEdit*>(key);
+        if (lineEdit) {
+             m_accountValueInputs.remove(lineEdit);
+        }
+        
+        // Delete the block widget
+        blockFrame->deleteLater();
+
+        qDebug() << "Removed block for key:" << key;
+    });
+
+    // Add widgets to the layout
+    blockLayout->addWidget(keyLabel, 1);     
+    blockLayout->addWidget(valueEdit, 0);    
+    blockLayout->addWidget(deleteButton, 0); // Add the button next to the QLineEdit
 
     // Set an appropriate minimum height for the block
     blockFrame->setMinimumHeight(60);

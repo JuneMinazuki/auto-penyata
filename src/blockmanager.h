@@ -37,8 +37,9 @@ private:
     // Stores the QLineEdit pointer and its original value
     QHash<QLineEdit*, QString> m_accountValueInputs; 
 
-    // Create each block
-    QWidget* createBasicBlock(const QString &key, QString value);
+    // Create block
+    QWidget* createBasicBlock(const QString &key, QString value); // Basic block
+    QWidget* createDeletableBlock(const QString &key, QString value); // Deletable block
 };
 
 #endif // BLOCKMANAGER_H

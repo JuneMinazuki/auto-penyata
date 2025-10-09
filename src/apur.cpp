@@ -44,31 +44,6 @@ void Apur::handlePageActivation()
     saveButton->setEnabled(false); // Disable save button
 
     // Create accounts block
-    QVariantMap jsonData = loadJson(fileName);
+    QVariantMap jsonData = loadJson();
     m_blockManager->createAccountBlocks(jsonData, desiredOrder, ui, scrollArea, contentWidget);
-}
-
-// When user press Save button
-void Apur::handleSaveButtonClick()
-{
-    // Get current settings from the UI
-    QVariantMap changedData = m_blockManager->getEditedValueMap();
-
-    // Save the changed data to JSON
-    bool success = JsonManager::updateJson(fileName, changedData);
-
-    if (success) {
-        // Update the original data
-        m_blockManager->updateCurrentValue();
-
-        saveButton->setEnabled(false);
-
-        saveLabel->setText("Saved!");
-        saveLabel->setStyleSheet("QLabel { color : #37ba1e }");
-    } else {
-        saveLabel->setText("Failed to save!");
-        saveLabel->setStyleSheet("QLabel { color : #e21717 }");
-    }
-
-    saveLabel->setVisible(true);
 }

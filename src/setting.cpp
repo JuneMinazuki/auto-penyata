@@ -47,7 +47,7 @@ void Setting::loadJson()
     // Find "Date"
     if (settings.contains("Date")) {
         QString dateString = settings["Date"].toString();
-        QDate date = QDate::fromString(dateString, "yyyy-MM-dd");
+        QDate date = QDate::fromString(dateString, "yyyy/MM/dd");
 
         // Check if the conversion was successful
         if (date.isValid()) {

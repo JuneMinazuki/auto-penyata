@@ -3,6 +3,7 @@
 
 #include "setting.h"
 #include "apur.h"
+#include "belanja.h"
 
 #include <QApplication>
 #include <QMainWindow>
@@ -29,8 +30,9 @@ private:
     Ui::MainWindow *ui;
 
     // Pages
-    Apur *m_apurPage = nullptr; 
-    Setting *m_settingPage = nullptr;
+    Apur *m_apurPage; 
+    Belanja *m_belanjaPage;
+    Setting *m_settingPage;
 
     //VARIABLE
     static QHash<QString, int> m_pageIndexMap;

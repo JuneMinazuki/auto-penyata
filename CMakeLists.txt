@@ -28,6 +28,8 @@ set(PROJECT_SOURCES
     src/blockmanager.h
     src/pagemanager.cpp
     src/pagemanager.h
+    src/belanja.cpp
+    src/belanja.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

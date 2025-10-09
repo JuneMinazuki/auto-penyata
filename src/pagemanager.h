@@ -25,6 +25,7 @@ protected:
     // Page initailsation
     QString fileName; // Json file name
     QPushButton* saveButton; // Save button
+    QPushButton* addButton; // Add account button
     QLabel* saveLabel; // Save status label
     QScrollArea* scrollArea; // Scrollable area
     QWidget *contentWidget; // Area to put all account block
@@ -33,12 +34,12 @@ protected:
     QStringList desiredOrder;
 
     // Read from Json
-    QVariantMap loadJson(QString fileName);
+    QVariantMap loadJson();
 
     // Check for value changes
     void checkForChanges();
 
-protected slots: // or public/private
-    virtual void handleSaveButtonClick() = 0;
+protected slots:
+    virtual void handleSaveButtonClick();
 };
 #endif // PAGEMANAGER_H

@@ -131,7 +131,7 @@ bool JsonManager::updateJson(const QString& fileName, const QVariantMap& datas)
 void JsonManager::initialJsonSetup()
 {
     // Initial data for setup
-    QString todayDate = QDate::currentDate().toString("dd/MM/yyyy");
+    QString todayDate = QDate::currentDate().toString("yyyy/MM/dd");
     static const std::vector<JsonSetupItem> ALL_JSON_FILES = {
         {"apur.json", {
             {"Jualan", 0.0},
@@ -163,7 +163,6 @@ void JsonManager::initialJsonSetup()
             {"Bank", 0.0},
             {"Akaun Belum Terima", 0.0},
             {"Peruntukan Hutang Ragu", 0.0},
-            {"CustomAccounts", QVariantMap{}} 
         }},
 
         {"liabiliti_bukan_semasa.json", {
@@ -172,7 +171,6 @@ void JsonManager::initialJsonSetup()
 
         {"liabiliti_semasa.json", {
             {"Akaun Belum Bayar", 0.0},
-            {"CustomAccounts", QVariantMap{}} 
         }},
 
         {"ekuiti_pemilik.json", {
