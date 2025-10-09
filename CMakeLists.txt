@@ -13,6 +13,10 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
+set(MACOSX_BUNDLE_ICON_FILE icon.icns)
+set(app_icon_macos "${CMAKE_CURRENT_SOURCE_DIR}/icon.icns")
+set_source_files_properties(${app_icon_macos} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+
 set(PROJECT_SOURCES
     src/main.cpp
     src/mainwindow.cpp
@@ -36,6 +40,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(auto-penyata
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        ${app_icon_macos}
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET auto-penyata APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -72,6 +77,7 @@ set_target_properties(auto-penyata PROPERTIES
     WIN32_EXECUTABLE TRUE
     MACOSX_BUNDLE_BUNDLE_NAME "Auto Penyata"
     OUTPUT_NAME "Auto Penyata"
+    MACOSX_BUNDLE_ICON_FILE "icon.icns" 
 )
 
 include(GNUInstallDirs)
