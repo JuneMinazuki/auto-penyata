@@ -405,8 +405,11 @@ QScrollBar:horizontal {
          <height>461</height>
         </rect>
        </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
        <property name="styleSheet">
-        <string notr="true">QWidget#apur_scrollAreaWidgetContents {background-color: transparent; border: none;}</string>
+        <string notr="true">QWidget#belanja_scrollAreaWidgetContents {background-color: transparent; border: none;}</string>
        </property>
       </widget>
      </widget>

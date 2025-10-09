@@ -61,11 +61,13 @@ void BlockManager::createAccountBlocks(const QVariantMap &variantMap, QStringLis
         }
     }
 
-    QMapIterator<QString, QVariant> i(variantMap);
-    while (i.hasNext()) {
-        i.next();
-        const QString key = i.key();
-        const QVariant value = i.value();
+    for (auto it = variantMap.constBegin(); it != variantMap.constEnd(); ++it) {
+        const QString& key = it.key();
+        const QVariant& value = it.value();
+
+        if (key == "_placeholder") {
+            continue;
+        }
 
         // If the key hasn't been processed in the desiredOrder loop
         if (!processedKeys.contains(key))
@@ -210,9 +212,9 @@ QWidget* BlockManager::createDeletableBlock(const QString &key, QString value)
     });
 
     // Add widgets to the layout
-    blockLayout->addWidget(keyLabel, 1);     
-    blockLayout->addWidget(valueEdit, 0);    
-    blockLayout->addWidget(deleteButton, 0); // Add the button next to the QLineEdit
+    blockLayout->addWidget(keyLabel, 1);
+    blockLayout->addWidget(deleteButton, 0);
+    blockLayout->addWidget(valueEdit, 0);  
 
     // Set an appropriate minimum height for the block
     blockFrame->setMinimumHeight(60);

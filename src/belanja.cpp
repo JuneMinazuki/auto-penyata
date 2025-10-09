@@ -1,5 +1,4 @@
 #include "belanja.h"
-#include "jsonmanager.h"
 #include "blockmanager.h"
 
 Belanja::Belanja(Ui::MainWindow *m_ui, QObject *parent) 

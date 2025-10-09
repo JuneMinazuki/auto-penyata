@@ -1,5 +1,4 @@
 #include "apur.h"
-#include "jsonmanager.h"
 #include "blockmanager.h"
 
 Apur::Apur(Ui::MainWindow *m_ui, QObject *parent) 
