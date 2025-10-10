@@ -2,28 +2,44 @@
 #include "jsonmanager.h"
 
 Setting::Setting(Ui::MainWindow *m_ui, QObject *parent) 
-    : QObject(parent),
-      ui(m_ui)
+    : PageManager(m_ui, parent)
 {
     // Button
-    connect(ui->button_setting_save, &QPushButton::clicked, this, &Setting::handleSaveButtonClick); // Save button
     connect(ui->button_reset, &QPushButton::clicked, this, &Setting::handleResetButtonClick); // Reset button
     connect(ui->button_setToday, &QPushButton::clicked, this, &Setting::handleSetTodayButtonClick); // setToday button
-
-    // Check for value changed
-    connect(ui->input_company_name, &QLineEdit::textEdited, this, &Setting::checkForChanges);
-    connect(ui->input_date, &QDateEdit::editingFinished, this, &Setting::checkForChanges);
-    connect(ui->input_date, &QDateEdit::dateChanged, this, &Setting::checkForChanges);
 }
 
-void Setting::handleSettingActivation()
+// When setting page is open
+void Setting::handlePageActivation()
 {
     qDebug() << "Switched to page: Setting";
     loadJson();
     
-    ui->label_setting_saved_status->setVisible(false); // Hide save label
     ui->label_reset_status->setVisible(false); // Hide reset label
-    ui->button_setting_save->setEnabled(false); // Disable save button
+}
+
+// When setting page is closed
+void Setting::handlePageDeactivation()
+{   
+    // Get data
+    QVariantMap settingsMap {
+        {"CompanyName", ui->input_company_name->text()},
+        {"Date", ui->input_date->date().toString("yyyy/MM/dd")}
+    };
+
+    // Check if changes were made
+    if (settingsMap["CompanyName"] == initialCompanyName && settingsMap["Date"] == initialDate){
+        return;
+    }
+
+    // Save to Json
+    bool success = JsonManager::writeJson("setting.json", settingsMap);
+
+    if (success) {
+        qDebug() << "Data saved successfully to setting.json";
+    } else {
+        qDebug() << "Failed to save data to setting.json";
+    }
 }
 
 // Load from JSON
@@ -66,31 +82,6 @@ void Setting::loadJson()
     ui->input_date->setDate(initialDate);
 }
 
-// When user press Save button
-void Setting::handleSaveButtonClick()
-{
-    QVariantMap settingsMap{
-        {"CompanyName", ui->input_company_name->text()},
-        {"Date", ui->input_date->date()}
-    };
-
-    if (JsonManager::writeJson("setting.json", settingsMap)) {
-        ui->label_setting_saved_status->setText("Saved!");
-        ui->label_setting_saved_status->setStyleSheet("QLabel { color : #37ba1e }");
-
-        // Disable save button
-        initialCompanyName = ui->input_company_name->text();
-        initialDate = ui->input_date->date();
-        ui->button_setting_save->setEnabled(false);
-    } else {
-        ui->label_setting_saved_status->setText("Failed to save!");
-        ui->label_setting_saved_status->setStyleSheet("QLabel { color : #e21717 }");
-    }
-
-    ui->label_reset_status->setVisible(false);
-    ui->label_setting_saved_status->setVisible(true);
-}
-
 // When user press Reset button
 void Setting::handleResetButtonClick()
 {
@@ -106,7 +97,6 @@ void Setting::handleResetButtonClick()
         ui->label_reset_status->setStyleSheet("QLabel { color : #e21717 }");
     }
 
-    ui->label_setting_saved_status->setVisible(false);
     ui->label_reset_status->setVisible(true);
     loadJson();
 }
@@ -116,14 +106,4 @@ void Setting::handleSetTodayButtonClick()
 {
     qDebug() << "Change date to today:" << QDate::currentDate();
     ui->input_date->setDate(QDate::currentDate());
-}
-
-// Check for changes
-void Setting::checkForChanges() 
-{
-    // Compare current values against initial values
-    bool changed = (ui->input_company_name->text() != initialCompanyName) || (ui->input_date->date() != initialDate);
-
-    // Enable or disable the Save button
-    ui->button_setting_save->setEnabled(changed);
 }

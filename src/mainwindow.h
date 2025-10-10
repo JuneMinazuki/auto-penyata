@@ -4,6 +4,7 @@
 #include "setting.h"
 #include "apur.h"
 #include "belanja.h"
+#include "pagemanager.h"
 
 #include <QApplication>
 #include <QMainWindow>
@@ -22,6 +23,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 private slots:
     void onSidebarItemClicked(QListWidgetItem *item);
@@ -35,8 +39,9 @@ private:
     Setting *m_settingPage;
 
     //VARIABLE
-    static QHash<QString, int> m_pageIndexMap;
+    QHash<QString, int> m_pageIndexMap; // Index of each page
 
-    void populatePageIndexMap(); // Helper function to populate the index map
+    // A pointer to the currently active page manager. 
+    PageManager* m_currentPageManager = nullptr;
 };
 #endif // MAINWINDOW_H

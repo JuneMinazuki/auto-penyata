@@ -9,59 +9,32 @@ PageManager::PageManager(Ui::MainWindow *ui, QObject *parent, std::unique_ptr<Bl
 {
 }
 
-// When user press Save button
-void PageManager::handleSaveButtonClick()
+PageManager::PageManager(Ui::MainWindow *ui, QObject *parent)
+    : QObject(parent),
+      ui(ui)
 {
-    // Get current settings from the UI
-    QVariantMap changedData = m_blockManager->getEditedValueMap();
+}
 
-    // Save the changed data to JSON
-    bool success = JsonManager::updateJson(fileName, changedData);
+PageManager::~PageManager() = default; 
+
+// When page is closed
+void PageManager::handlePageDeactivation()
+{   
+    // Get all data
+    QVariantMap newData = m_blockManager->getAllValueMap();
+    newData.insert("_placeholder", true);
+
+    // Save to Json
+    bool success = JsonManager::writeJson(fileName, newData);
 
     if (success) {
-        // Update the original data
-        m_blockManager->updateCurrentValue();
-
-        saveButton->setEnabled(false);
-
-        saveLabel->setText("Saved!");
-        saveLabel->setStyleSheet("QLabel { color : #37ba1e }");
+        qDebug() << "Data saved successfully to" << fileName;
     } else {
-        saveLabel->setText("Failed to save!");
-        saveLabel->setStyleSheet("QLabel { color : #e21717 }");
+        qDebug() << "Failed to save data to" << fileName;
     }
-
-    saveLabel->setVisible(true);
 }
 
 // When user press Add button
 void PageManager::handleAddButtonClick()
 {
-    // Get current settings from the UI
-    QVariantMap changedData = m_blockManager->getEditedValueMap();
-
-    // Save the changed data to JSON
-    bool success = JsonManager::updateJson(fileName, changedData);
-
-    if (success) {
-        // Update the original data
-        m_blockManager->updateCurrentValue();
-
-        saveButton->setEnabled(false);
-
-        saveLabel->setText("Saved!");
-        saveLabel->setStyleSheet("QLabel { color : #37ba1e }");
-    } else {
-        saveLabel->setText("Failed to save!");
-        saveLabel->setStyleSheet("QLabel { color : #e21717 }");
-    }
-
-    saveLabel->setVisible(true);
-}
-
-// Check for changes
-void PageManager::checkForChanges() 
-{
-    // Enable the Save button if any change occurred
-    saveButton->setEnabled(m_blockManager->hasBlockValuesChanged());
 }

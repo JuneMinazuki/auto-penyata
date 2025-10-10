@@ -7,8 +7,6 @@ Apur::Apur(Ui::MainWindow *m_ui, QObject *parent)
 {
     // Page initailsation
     fileName = "apur.json";
-    saveButton = ui->button_apur_save;
-    saveLabel = ui->label_apur_saved_status;
     scrollArea = ui->scrollable_apur;
     contentWidget = ui->apur_scrollAreaWidgetContents;
 
@@ -26,12 +24,6 @@ Apur::Apur(Ui::MainWindow *m_ui, QObject *parent)
         "Inventori Akhir"
     };
 
-    // Button
-    connect(saveButton, &QPushButton::clicked, this, &Apur::handleSaveButtonClick); // Save button
-
-    // Check for value changes
-    connect(m_blockManager.get(), &BlockManager::blockValueChanged, this, &Apur::checkForChanges);
-
     handlePageActivation();
 }
 
@@ -39,9 +31,6 @@ Apur::Apur(Ui::MainWindow *m_ui, QObject *parent)
 void Apur::handlePageActivation()
 {
     qDebug() << "Switched to page: APUR";
-
-    saveLabel->setVisible(false); // Hide save label
-    saveButton->setEnabled(false); // Disable save button
 
     // Create accounts block
     QVariantMap jsonData = JsonManager::readJson(fileName);

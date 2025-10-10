@@ -103,35 +103,6 @@ bool JsonManager::writeJson(const QString& fileName, const QVariantMap& datas)
     return true;
 }
 
-/**
- * @brief Overwrite existing key in QVariantMap to a JSON file, or "__KEY_TO_DELETE__" to delete a key
- * @param fileName The name of the JSON file to write
- * @param datas The map of datas to save
- * @return true if the write was successful, false otherwise
- */
-bool JsonManager::updateJson(const QString& fileName, const QVariantMap& datas)
-{
-    // Define the sentinel value that indicates a key should be deleted
-    const QVariant DELETE_SENTINEL = QVariant("__KEY_TO_DELETE__");
-
-    // Read existing data from json
-    QVariantMap existingData = readJson(fileName);
-
-    // Process the new data: overwrite, add, or delete keys
-    for (auto it = datas.constBegin(); it != datas.constEnd(); ++it) {
-        if (it.value() == DELETE_SENTINEL) {
-            // Delete the key
-            existingData.remove(it.key());
-        } else {
-            // Overwrite or add the key-value pair
-            existingData[it.key()] = it.value();
-        }
-    }
-
-    // Update Json with key value
-    return writeJson(fileName, existingData);
-}
-
 // Setup initial JSON
 void JsonManager::initialJsonSetup()
 {
@@ -148,7 +119,8 @@ void JsonManager::initialJsonSetup()
             {"Angkutan Masuk", 0.0},
             {"Upah Atas Belian", 0.0},
             {"Duti Import", 0.0},
-            {"Insurans Atas Belian", 0.0}
+            {"Insurans Atas Belian", 0.0},
+            {"_placeholder", true}
         }},
 
         {"belanja.json", {
@@ -168,6 +140,7 @@ void JsonManager::initialJsonSetup()
             {"Bank", 0.0},
             {"Akaun Belum Terima", 0.0},
             {"Peruntukan Hutang Ragu", 0.0},
+            {"_placeholder", true}
         }},
 
         {"liabiliti_bukan_semasa.json", {
@@ -176,16 +149,19 @@ void JsonManager::initialJsonSetup()
 
         {"liabiliti_semasa.json", {
             {"Akaun Belum Bayar", 0.0},
+            {"_placeholder", true}
         }},
 
         {"ekuiti_pemilik.json", {
             {"Modal Awal", 0.0},
             {"Ambilan", 0.0},
+            {"_placeholder", true}
         }},
 
         {"setting.json", {
             {"CompanyName", "YourCompanyName"},
-            {"Date", todayDate}
+            {"Date", todayDate},
+            {"_placeholder", true}
         }},
     };
 

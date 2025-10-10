@@ -16,21 +16,10 @@ public:
     // Creates visual blocks for each item in the variant map from Json
     void createAccountBlocks(const QVariantMap &variantMap, QStringList desiredOrder, Ui::MainWindow *m_ui, QScrollArea *scrollArea, QWidget *contentWidget);
 
-    // Check for value changes
-    bool hasBlockValuesChanged() const;
-
     // Returns a map of account and it's current value
-    QVariantMap getEditedValueMap() const;
-
-    // Update intial value
-    void updateCurrentValue();
-
-signals:
-    // Notify Main Window that a block value has changed
-    void blockValueChanged();
+    QVariantMap getAllValueMap() const;
 
 private slots:
-    void checkForValueChanges();
     void reformatValueOnFinish();
 
 private:

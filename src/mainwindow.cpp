@@ -2,28 +2,27 @@
 #include "./ui_mainwindow.h"
 #include "jsonmanager.h"
 
-// Hash of the item in sidebar
-static const QHash<QString, QString> s_sidebarActions = {
-    {"📋 APUR", "APUR"},
-    {"🛒 Belanja", "Belanja"},
-    {"📊 Hasil", "Hasil"},
-    {"🏠 Aset Bukan Semasa", "AsetBukanSemasa"},
-    {"💵 Aset Semasa", "AsetSemasa"},
-    {"🤝 Liabiliti Bukan Semasa", "LiabilitiBukanSemasa"},
-    {"🏦 Liabiliti Semasa", "LiabilitiSemasa"},
-    {"🏢 Ekuiti Pemilik", "EkuitiPemilik"},
-    {"🛠️ Settings", "Settings"},
-    {"🖨️ Export PDF", "Export"}
-};
-
-// VARIABLE
-QHash<QString, int> MainWindow::m_pageIndexMap;
+#include <QCloseEvent>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this); 
+
+    // Hash of the item in sidebar
+    m_pageIndexMap = {
+        {"📋 APUR", 0},
+        {"🛒 Belanja", 1},
+        {"📊 Hasil", 2},
+        {"🏠 Aset Bukan Semasa", 3},
+        {"💵 Aset Semasa", 4},
+        {"🤝 Liabiliti Bukan Semasa", 5},
+        {"🏦 Liabiliti Semasa", 6},
+        {"🏢 Ekuiti Pemilik", 7},
+        {"🛠️ Settings", 8},
+        {"🖨️ Export PDF", 9}
+    };
 
     // Setup for each pages
     m_apurPage = new Apur(ui, this);
@@ -32,12 +31,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Default page
     ui->MainScreen->setCurrentIndex(0); 
+    m_currentPageManager = dynamic_cast<PageManager*>(m_apurPage);
 
     // Setup JSON (if applicable)
     JsonManager::initialJsonSetup();
-
-    // Populate the index map once
-    populatePageIndexMap();
 
     // When user click on sidebar button
     connect(ui->SidebarWidget, &QListWidget::itemClicked, this, &MainWindow::onSidebarItemClicked);
@@ -48,34 +45,44 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-// Helper function to populate the index map
-void MainWindow::populatePageIndexMap()
+void MainWindow::closeEvent(QCloseEvent *event)
 {
-    QStackedWidget* mainScreen = ui->MainScreen;
-    
-    for (int i = 0; i < mainScreen->count(); ++i) {
-        QWidget* page = mainScreen->widget(i);
-        m_pageIndexMap.insert(page->objectName(), i);
+    // Performs JSON update for the old page
+    if (m_currentPageManager) {
+        m_currentPageManager->handlePageDeactivation(); 
     }
+
+    // Accept the event to allow the application to close
+    event->accept();
 }
 
 // Called when user click on sidebar button.
 void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
 {
-    QString itemText = item->text();
-    QString actionName = s_sidebarActions.value(itemText); 
+    QString actionName = item->text();
 
     if (m_pageIndexMap.contains(actionName)) {
         int index = m_pageIndexMap.value(actionName);
+
+        // Performs JSON update for the old page
+        if (m_currentPageManager) {
+            m_currentPageManager->handlePageDeactivation(); 
+        }
+
         ui->MainScreen->setCurrentIndex(index);
+
+        // Pointer to the new page manager
+        QObject* newPageManager = nullptr; 
 
         switch (index) {
             case 0: // APUR
+                newPageManager = m_apurPage;
                 if (m_apurPage) {
                     m_apurPage->handlePageActivation();
                 }
                 break;
             case 1: // Belanja
+                newPageManager = m_belanjaPage;
                 if (m_belanjaPage) {
                     m_belanjaPage->handlePageActivation();
                 }
@@ -93,15 +100,19 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
             case 7: // Ekuiti Pemilik
                 break;
             case 8: // Setting
+                newPageManager = m_settingPage;
                 if (m_settingPage) {
-                    m_settingPage->handleSettingActivation();
+                    m_settingPage->handlePageActivation();
                 }
                 break;
             case 9: // Export PDF
                 break;
         }
+
+        // Update the tracker for the next deactivation
+        m_currentPageManager = dynamic_cast<PageManager*>(newPageManager);
     }
     else {
-        qDebug() << "ERROR: Page not found in map:" << itemText;
+        qDebug() << "ERROR: Page not found in map:" << actionName;
     }
 }

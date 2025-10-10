@@ -124,8 +124,6 @@ QWidget* BlockManager::createBasicBlock(const QString &key, QString value)
         "QLineEdit {background-color: #181818; color: #E2E8F0; border: none; padding: 5px;"
                     "min-width: 120px; border-radius: 2px; font-size: 16px;}"
     );
-    // Connect the QLineEdit to the BlockManager's internal slot for change detection
-    connect(valueEdit, &QLineEdit::textEdited, this, &BlockManager::checkForValueChanges);
 
     // Reformat the text when the user is finished editing
     connect(valueEdit, &QLineEdit::editingFinished, this, &BlockManager::reformatValueOnFinish);
@@ -179,8 +177,6 @@ QWidget* BlockManager::createDeletableBlock(const QString &key, QString value)
         "QLineEdit {background-color: #181818; color: #E2E8F0; border: none; padding: 5px;"
                     "min-width: 120px; border-radius: 2px; font-size: 16px;}"
     );
-    // Connect the QLineEdit to the BlockManager's internal slot for change detection
-    connect(valueEdit, &QLineEdit::textEdited, this, &BlockManager::checkForValueChanges);
 
     // Reformat the text when the user is finished editing
     connect(valueEdit, &QLineEdit::editingFinished, this, &BlockManager::reformatValueOnFinish);
@@ -224,66 +220,27 @@ QWidget* BlockManager::createDeletableBlock(const QString &key, QString value)
     return blockFrame;
 }
 
-// Returns true if any QLineEdit's current value is different from its stored initial value
-bool BlockManager::hasBlockValuesChanged() const
-{
-    for (auto it = m_accountValueInputs.constBegin(); it != m_accountValueInputs.constEnd(); ++it)
-    {
-        QLineEdit *lineEdit = it.key();
-        const QString &initialValue = it.value();
-        
-        // Compare the current text with the stored initial value
-        if (lineEdit->text() != initialValue)
-        {
-            return true;
-        }
-    }
-    
-    return false;
-}
-
-// Slot to catch the QLineEdit::textEdited signal
-void BlockManager::checkForValueChanges()
-{
-    // A change has occurred in one of the blocks. 
-    emit blockValueChanged(); 
-}
-
 // Returns a map of account and it's current value
-QVariantMap BlockManager::getEditedValueMap() const
+QVariantMap BlockManager::getAllValueMap() const
 {
-    QVariantMap editedMap;
+    QVariantMap allValuesMap;
 
     for (auto it = m_accountValueInputs.constBegin(); it != m_accountValueInputs.constEnd(); ++it)
     {
         QLineEdit *lineEdit = it.key();
-        const QString &initialValue = it.value();
 
         // Ensure the QLineEdit has a unique objectName set
         QString keyName = lineEdit->objectName();
         if (keyName.isEmpty()) {
-            qWarning() << "ERROR: Emtpy keyName found!";
+            qWarning() << "ERROR: Empty keyName found! Skipping entry.";
             continue; 
         }
 
-        // Compare the current text with the stored initial value
-        if (lineEdit->text() != initialValue)
-        {
-            editedMap.insert(keyName, lineEdit->text());
-        }
+        // Insert the current text of the QLineEdit into the result map.
+        allValuesMap.insert(keyName, lineEdit->text());
     }
 
-    return editedMap;
-}
-
-// Update initial value
-void BlockManager::updateCurrentValue()
-{
-    for (auto it = m_accountValueInputs.begin(); it != m_accountValueInputs.end(); ++it)
-    {
-        QLineEdit *lineEdit = it.key();
-        it.value() = lineEdit->text();
-    }
+    return allValuesMap;
 }
 
 // Slot to reformat the QLineEdit value when editing is finished

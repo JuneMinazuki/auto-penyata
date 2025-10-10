@@ -13,10 +13,14 @@ class PageManager : public QObject
     
 public:
     explicit PageManager(Ui::MainWindow *ui, QObject *parent, std::unique_ptr<BlockManager> blockManager);
-    virtual ~PageManager() = default;
+    PageManager(Ui::MainWindow *ui, QObject *parent);
+    virtual ~PageManager();
 
     // When page is open
     virtual void handlePageActivation() = 0;
+
+    // When page is closed
+    virtual void handlePageDeactivation();
 
 protected:
     Ui::MainWindow *ui; 
@@ -24,20 +28,14 @@ protected:
 
     // Page initailsation
     QString fileName; // Json file name
-    QPushButton* saveButton; // Save button
-    QPushButton* addButton; // Add account button
-    QLabel* saveLabel; // Save status label
+    QPushButton* addButton; // Add account buttons
     QScrollArea* scrollArea; // Scrollable area
     QWidget *contentWidget; // Area to put all account block
 
     // Desired order of blocks
     QStringList desiredOrder;
 
-    // Check for value changes
-    void checkForChanges();
-
 protected slots:
-    virtual void handleSaveButtonClick();
     virtual void handleAddButtonClick();
 };
 #endif // PAGEMANAGER_H
