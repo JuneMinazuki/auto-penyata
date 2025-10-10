@@ -33,6 +33,6 @@ void Apur::handlePageActivation()
     qDebug() << "Switched to page: APUR";
 
     // Create accounts block
-    QVariantMap jsonData = JsonManager::readJson(fileName);
+    jsonData = JsonManager::readJson(fileName);
     m_blockManager->createAccountBlocks(jsonData, desiredOrder, ui, scrollArea, contentWidget);
 }

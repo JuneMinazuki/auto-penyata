@@ -28,6 +28,7 @@ protected:
 
     // Page initailsation
     QString fileName; // Json file name
+    QVariantMap jsonData; // Data from Json
     QPushButton* addButton; // Add account buttons
     QScrollArea* scrollArea; // Scrollable area
     QWidget *contentWidget; // Area to put all account block

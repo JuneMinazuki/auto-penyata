@@ -34,7 +34,20 @@ void PageManager::handlePageDeactivation()
     }
 }
 
-// When user press Add button
 void PageManager::handleAddButtonClick()
 {
+    const QString newKey = "New account";
+    
+    // Find a unique key to prevent duplicate
+    QString uniqueKey = newKey;
+    int counter = 1;
+    while (jsonData.contains(uniqueKey)) {
+        uniqueKey = QString("%1 %2").arg(newKey).arg(counter++);
+    }
+
+    // Add the new data to the map
+    jsonData.insert(uniqueKey, 0.0); 
+
+    // Create accounts block
+    m_blockManager->createAccountBlocks(jsonData, desiredOrder, ui, scrollArea, contentWidget);
 }

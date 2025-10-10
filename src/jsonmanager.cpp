@@ -161,7 +161,6 @@ void JsonManager::initialJsonSetup()
         {"setting.json", {
             {"CompanyName", "YourCompanyName"},
             {"Date", todayDate},
-            {"_placeholder", true}
         }},
     };
 

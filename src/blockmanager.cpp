@@ -157,9 +157,13 @@ QWidget* BlockManager::createDeletableBlock(const QString &key, QString value)
     QHBoxLayout *blockLayout = new QHBoxLayout(blockFrame);
 
     // Display account name on the left
-    QLabel *keyLabel = new QLabel(key);
-    keyLabel->setFont(QFont("Arial", 16, QFont::Bold));
-    keyLabel->setStyleSheet("QLabel {background-color: #262626; color: #E2E8F0; border: none; padding-left: 10px;}");
+    QLineEdit *keyEdit = new QLineEdit;
+    keyEdit->setText(key);
+    keyEdit->setFont(QFont("Arial", 16, QFont::Bold));
+    keyEdit->setStyleSheet(
+        "QLineEdit {background-color: #181818; color: #E2E8F0; border: none; padding: 5px;"
+                    "min-width: 120px; border-radius: 2px; font-size: 16px;}"
+    );
 
     // Display account amount on the right in a QLineEdit
     QLineEdit *valueEdit = new QLineEdit;
@@ -181,6 +185,11 @@ QWidget* BlockManager::createDeletableBlock(const QString &key, QString value)
     // Reformat the text when the user is finished editing
     connect(valueEdit, &QLineEdit::editingFinished, this, &BlockManager::reformatValueOnFinish);
 
+    // Update m_accountValueInputs
+    connect(keyEdit, &QLineEdit::textChanged, valueEdit, [valueEdit](const QString &newKey) {
+        valueEdit->setObjectName(newKey);
+    });
+
     // Store the initial value in the map
     m_accountValueInputs.insert(valueEdit, value);
 
@@ -194,21 +203,18 @@ QWidget* BlockManager::createDeletableBlock(const QString &key, QString value)
     );
     
     // Connect the button to a slot to delete the block
-    connect(deleteButton, &QPushButton::clicked, this, [blockFrame, key, this]() {
-        // Remove the QLineEdit from the tracking map
-        QLineEdit *lineEdit = blockFrame->findChild<QLineEdit*>(key);
-        if (lineEdit) {
-             m_accountValueInputs.remove(lineEdit);
-        }
+    connect(deleteButton, &QPushButton::clicked, this, [blockFrame, valueEdit, this]() {
+        // Remove the QLineEdit from the map
+        m_accountValueInputs.remove(valueEdit);
         
         // Delete the block widget
         blockFrame->deleteLater();
 
-        qDebug() << "Removed block for key:" << key;
+        qDebug() << "Removed block for key:" << valueEdit->objectName();;
     });
 
     // Add widgets to the layout
-    blockLayout->addWidget(keyLabel, 1);
+    blockLayout->addWidget(keyEdit, 1);
     blockLayout->addWidget(deleteButton, 0);
     blockLayout->addWidget(valueEdit, 0);  
 
