@@ -56,6 +56,11 @@ QVariantMap JsonManager::readJson(const QString& fileName)
         return QVariantMap();
     }
 
+    if (doc.isEmpty()) {
+        qWarning() << filePath << "is empty. Cannot load value";
+        return QVariantMap();
+    }
+
     // Convert the root QJsonObject to a QVariantMap
     return doc.object().toVariantMap();
 }

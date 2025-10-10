@@ -33,13 +33,11 @@ protected:
     // Desired order of blocks
     QStringList desiredOrder;
 
-    // Read from Json
-    QVariantMap loadJson();
-
     // Check for value changes
     void checkForChanges();
 
 protected slots:
     virtual void handleSaveButtonClick();
+    virtual void handleAddButtonClick();
 };
 #endif // PAGEMANAGER_H

@@ -9,21 +9,33 @@ PageManager::PageManager(Ui::MainWindow *ui, QObject *parent, std::unique_ptr<Bl
 {
 }
 
-// Load from JSON
-QVariantMap PageManager::loadJson()
-{
-    QVariantMap datas = JsonManager::readJson(fileName);
-
-    if (datas.isEmpty()) {
-        qWarning() << fileName << "is empty. Cannot load value";
-        return QVariantMap();
-    }
-
-    return datas;
-}
-
 // When user press Save button
 void PageManager::handleSaveButtonClick()
+{
+    // Get current settings from the UI
+    QVariantMap changedData = m_blockManager->getEditedValueMap();
+
+    // Save the changed data to JSON
+    bool success = JsonManager::updateJson(fileName, changedData);
+
+    if (success) {
+        // Update the original data
+        m_blockManager->updateCurrentValue();
+
+        saveButton->setEnabled(false);
+
+        saveLabel->setText("Saved!");
+        saveLabel->setStyleSheet("QLabel { color : #37ba1e }");
+    } else {
+        saveLabel->setText("Failed to save!");
+        saveLabel->setStyleSheet("QLabel { color : #e21717 }");
+    }
+
+    saveLabel->setVisible(true);
+}
+
+// When user press Add button
+void PageManager::handleAddButtonClick()
 {
     // Get current settings from the UI
     QVariantMap changedData = m_blockManager->getEditedValueMap();
