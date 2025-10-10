@@ -134,7 +134,7 @@ QListWidget::item:selected {
       <x>250</x>
       <y>0</y>
       <width>650</width>
-      <height>600</height>
+      <height>565</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -173,8 +173,8 @@ QListWidget::item:selected {
        <rect>
         <x>30</x>
         <y>75</y>
-        <width>591</width>
-        <height>461</height>
+        <width>590</width>
+        <height>460</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -231,8 +231,8 @@ QScrollBar:horizontal {
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>591</width>
-         <height>461</height>
+         <width>590</width>
+         <height>460</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -269,8 +269,8 @@ QScrollBar:horizontal {
        <rect>
         <x>30</x>
         <y>75</y>
-        <width>591</width>
-        <height>461</height>
+        <width>590</width>
+        <height>420</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -327,8 +327,8 @@ QScrollBar:horizontal {
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>591</width>
-         <height>461</height>
+         <width>590</width>
+         <height>420</height>
         </rect>
        </property>
        <property name="autoFillBackground">
@@ -346,7 +346,7 @@ QScrollBar:horizontal {
       <property name="geometry">
        <rect>
         <x>500</x>
-        <y>550</y>
+        <y>520</y>
         <width>110</width>
         <height>35</height>
        </rect>
@@ -698,7 +698,7 @@ QPushButton:pressed {
       <property name="geometry">
        <rect>
         <x>40</x>
-        <y>550</y>
+        <y>520</y>
         <width>110</width>
         <height>35</height>
        </rect>
@@ -740,7 +740,7 @@ QPushButton:pressed {
       <property name="geometry">
        <rect>
         <x>170</x>
-        <y>552</y>
+        <y>522</y>
         <width>281</width>
         <height>31</height>
        </rect>
@@ -777,6 +777,14 @@ QPushButton:pressed {
      </widget>
     </widget>
    </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
   </widget>
  </widget>
  <resources/>
