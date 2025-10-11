@@ -34,6 +34,8 @@ set(PROJECT_SOURCES
     src/pagemanager.h
     src/belanja.cpp
     src/belanja.h
+    src/pdfgenerator.cpp
+    src/pdfgenerator.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

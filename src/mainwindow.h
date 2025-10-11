@@ -5,6 +5,7 @@
 #include "apur.h"
 #include "belanja.h"
 #include "pagemanager.h"
+#include "pdfgenerator.h"
 
 #include <QApplication>
 #include <QMainWindow>
@@ -43,5 +44,7 @@ private:
 
     // A pointer to the currently active page manager. 
     PageManager* m_currentPageManager = nullptr;
+
+    void generatePDF();
 };
 #endif // MAINWINDOW_H

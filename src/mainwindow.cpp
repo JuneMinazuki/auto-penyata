@@ -69,10 +69,15 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
             m_currentPageManager->handlePageDeactivation(); 
         }
 
-        ui->MainScreen->setCurrentIndex(index);
+        if (index != 9){
+            ui->MainScreen->setCurrentIndex(index);
+        }
 
         // Pointer to the new page manager
         QObject* newPageManager = nullptr; 
+
+        // Determine should the app update m_currentPageManager
+        bool shouldUpdateCurrentPage = true; 
 
         switch (index) {
             case 0: // APUR
@@ -106,13 +111,23 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
                 }
                 break;
             case 9: // Export PDF
+                shouldUpdateCurrentPage = false;
+                generatePDF();
                 break;
         }
 
         // Update the tracker for the next deactivation
-        m_currentPageManager = dynamic_cast<PageManager*>(newPageManager);
+        if (shouldUpdateCurrentPage){
+            m_currentPageManager = dynamic_cast<PageManager*>(newPageManager);
+        }
     }
     else {
         qDebug() << "ERROR: Page not found in map:" << actionName;
     }
+}
+
+void MainWindow::generatePDF(){
+    // Read from Json
+    QVariantMap jsonData = JsonManager::readJson("apur.json");
+    PdfGenerator::createApurPdf(jsonData);
 }
