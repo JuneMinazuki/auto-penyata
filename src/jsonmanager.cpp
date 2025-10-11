@@ -66,6 +66,34 @@ QVariantMap JsonManager::readJson(const QString& fileName)
 }
 
 /**
+ * @brief Reads data from all JSON files
+ * @return A QMap where the key is the file name and the value is the QVariantMap
+ * of the JSON data. Files that fail to load will have an empty QVariantMap
+ * as their value.
+ */
+QMap<QString, QVariantMap> JsonManager::readAllJson()
+{
+    QMap<QString, QVariantMap> allData;
+    QStringList fileNames = {"apur.json", "aset_bukan_semasa.json", "aset_semasa.json", "belanja.json", "ekuiti_pemilik.json",
+                             "hasil.json", "liabiliti_bukan_semasa.json", "liabiliti_semasa.json", "setting.json"};
+
+    for (const QString& fileName : fileNames) {
+        // Get the data from Json
+        QVariantMap fileData = readJson(fileName);
+        allData.insert(fileName, fileData);
+
+        // Check if read is successful
+        if (!fileData.isEmpty()) {
+            qDebug() << "Successfully loaded JSON data from:" << fileName;
+        } else {
+            qWarning() << "Returned empty data for file:" << fileName << "(see previous warning for details)";
+        }
+    }
+
+    return allData;
+}
+
+/**
  * @brief Writes the data in QVariantMap to a JSON file
  *
  * @param fileName The name of the JSON file to write

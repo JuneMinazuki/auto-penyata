@@ -27,7 +27,7 @@ const int PdfGenerator::xCol2 = xStartLeft + 1495; // Column 2 (Middle)
 const int PdfGenerator::xCol3 = xStartLeft + 1795; // Column 3 (Right)
 
 // Generate Apur as a PDF
-void PdfGenerator::createApurPdf(const QVariantMap &data) {
+void PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
     //Setup pdf
     std::unique_ptr<QPdfWriter> writer = setupPDF("apur.pdf");
     QPainter painter(writer.get());
@@ -45,15 +45,17 @@ void PdfGenerator::createApurPdf(const QVariantMap &data) {
     painter.setPen(pen);
 
     // Get data from Json
-    QString companyName = data.value("CompanyName").toString();
-    QDate date = QDate::fromString(data["Date"].toString(), "yyyy/MM/dd");
+    QVariantMap settingData = data.value("setting.json");
+
+    QString companyName = settingData.value("CompanyName").toString();
+    QDate date = QDate::fromString(settingData["Date"].toString(), "yyyy/MM/dd");
 
     QLocale malayLocale(QLocale::Malay, QLocale::Malaysia); // Get malay month
     QString reportDate = malayLocale.toString(date, "d MMMM yyyy");
     QString reportName = QString("Akaun Perdagangan bagi tempoh berakhir %1").arg(reportDate);
 
     // Draw title
-    drawTitle(painter, &yPos, companyName, reportName, pageWidth, pageHeight);
+    yPos = drawTitle(painter, yPos, companyName, reportName, pageWidth, pageHeight);
 
     // Get font metrics for calculating rectangle height
     QFontMetrics fm = painter.fontMetrics();
@@ -84,37 +86,39 @@ std::unique_ptr<QPdfWriter> PdfGenerator::setupPDF(QString fileName) {
 }
 
 // Draw title and report name
-void PdfGenerator::drawTitle(QPainter& painter, int *yPos, QString companyName, QString reportName, int pageWidth, int pageHeight){
+int PdfGenerator::drawTitle(QPainter& painter, int yPos, QString companyName, QString reportName, int pageWidth, int pageHeight){
     // Draw Title
     painter.setFont(titleFont);
-    QRect namaPerniagaanRect(xStartLeft, *yPos, pageWidth, rectHeight);
+    QRect namaPerniagaanRect(xStartLeft, yPos, pageWidth, rectHeight);
     painter.drawText(namaPerniagaanRect, Qt::AlignCenter | Qt::TextWordWrap, companyName);
-    *yPos += 100;
+    yPos += 100;
 
-    QRect titleRect(xStartLeft, *yPos, pageWidth, rectHeight);
+    QRect titleRect(xStartLeft, yPos, pageWidth, rectHeight);
     painter.drawText(titleRect, Qt::AlignCenter | Qt::TextWordWrap, reportName);
-    *yPos += 125;
+    yPos += 125;
 
     // Draw a line under the title
-    painter.drawLine(xStartLeft, *yPos, xStartLeft + pageWidth, *yPos);
-    painter.drawLine(xCol1, *yPos, xCol1, pageHeight); 
-    painter.drawLine(xCol2, *yPos, xCol2, pageHeight); 
-    painter.drawLine(xCol3, *yPos, xCol3, pageHeight); 
-    *yPos += 75;
+    painter.drawLine(xStartLeft, yPos, xStartLeft + pageWidth, yPos);
+    painter.drawLine(xCol1, yPos, xCol1, pageHeight); 
+    painter.drawLine(xCol2, yPos, xCol2, pageHeight); 
+    painter.drawLine(xCol3, yPos, xCol3, pageHeight); 
+    yPos += 75;
 
     // Draw value column headers (RM)
     painter.setFont(headerFont);
     QFontMetrics headerFm = painter.fontMetrics();
 
-    QRect col1Rect = createValueRect(xCol1, *yPos, headerFm);
+    QRect col1Rect = createValueRect(xCol1, yPos, headerFm);
     painter.drawText(col1Rect, Qt::AlignCenter, "RM");
 
-    QRect col2Rect = createValueRect(xCol2, *yPos, headerFm);
+    QRect col2Rect = createValueRect(xCol2, yPos, headerFm);
     painter.drawText(col2Rect, Qt::AlignCenter, "RM");
 
-    QRect col3Rect = createValueRect(xCol3, *yPos, headerFm);
+    QRect col3Rect = createValueRect(xCol3, yPos, headerFm);
     painter.drawText(col3Rect, Qt::AlignCenter, "RM");
-    *yPos += headerFm.height();
+    yPos += headerFm.height();
+
+    return yPos;
 }
 
 // Create a QRect for the value columns

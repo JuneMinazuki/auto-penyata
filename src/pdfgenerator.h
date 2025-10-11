@@ -10,14 +10,14 @@ class PdfGenerator : public QObject
     Q_OBJECT
     
 public:
-    static void createApurPdf(const QVariantMap &data);
+    static void createApurPdf(const QMap<QString, QVariantMap> &data);
 
 private:
     // Setup Pdf
     static std::unique_ptr<QPdfWriter> setupPDF(QString fileName);
 
     // Draw title and report name
-    static void drawTitle(QPainter& painter, int* yPos, QString companyName, QString reportName, int pageWidth, int pageHeight);
+    static int drawTitle(QPainter& painter, int yPos, QString companyName, QString reportName, int pageWidth, int pageHeight);
 
     // Create a QRect for the value columns
     static QRect createValueRect(int xLeft, int yBaseLine, const QFontMetrics& fm);

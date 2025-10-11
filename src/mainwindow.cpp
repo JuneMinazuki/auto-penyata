@@ -128,6 +128,6 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
 
 void MainWindow::generatePDF(){
     // Read from Json
-    QVariantMap jsonData = JsonManager::readJson("setting.json");
+    QMap<QString, QVariantMap> jsonData = JsonManager::readAllJson();
     PdfGenerator::createApurPdf(jsonData);
 }
