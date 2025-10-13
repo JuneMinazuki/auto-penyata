@@ -44,7 +44,7 @@ void PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
     pen.setWidth(4);
     painter.setPen(pen);
 
-    // Get data from Json
+    // Get data from setting Json
     QVariantMap settingData = data.value("setting.json");
 
     QString companyName = settingData.value("CompanyName").toString();
@@ -57,8 +57,11 @@ void PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
     // Draw title
     yPos = drawTitle(painter, yPos, companyName, reportName, pageWidth, pageHeight);
 
-    // Get font metrics for calculating rectangle height
-    QFontMetrics fm = painter.fontMetrics();
+    // Get data from apur Json
+    QVariantMap apurData = data.value("apur.json");
+
+    // Draw untung kasar
+    yPos = drawUntungKasar(painter, yPos, apurData);
 
     // Finish drawing
     painter.end();
@@ -116,7 +119,17 @@ int PdfGenerator::drawTitle(QPainter& painter, int yPos, QString companyName, QS
 
     QRect col3Rect = createValueRect(xCol3, yPos, headerFm);
     painter.drawText(col3Rect, Qt::AlignCenter, "RM");
-    yPos += headerFm.height();
+    yPos += headerFm.height() * 1.4;
+
+    return yPos;
+}
+
+// Draw untung kasar
+int PdfGenerator::drawUntungKasar(QPainter& painter, int yPos, const QVariantMap apurData){
+    painter.setFont(regularFont);
+
+    yPos = generateRow(painter, "Jualan", apurData["Jualan"], xCol3, yPos);
+    yPos = generateRow(painter, "- Pulangan Jualan", apurData["Pulangan Jualan"], xCol3, yPos, true);
 
     return yPos;
 }
@@ -126,4 +139,21 @@ QRect PdfGenerator::createValueRect(int xLeft, int yBaseLine, const QFontMetrics
     int yTop = yBaseLine - fm.ascent();
     int height = fm.height();
     return QRect(xLeft, yTop, columnWidth, height);
+}
+
+// Create row of account
+int PdfGenerator::generateRow(QPainter& painter, const QString& accountName, const QVariant& accountValue, int xCol, int yPos, bool neg){
+    // Get font metrics for calculating rectangle height
+    const QFontMetrics fm = painter.fontMetrics();
+    
+    // Draw the name of account
+    painter.drawText(xStartLeft, yPos, accountName);
+
+    // Draw the value
+    QRect valueRect = createValueRect(xCol, yPos, fm);
+    QString value = (neg) ? QString("(%1)").arg(accountValue.toString()) : accountValue.toString();
+    painter.drawText(valueRect, Qt::AlignRight, value);
+
+    yPos += fm.height() * 1.4;
+    return yPos;
 }

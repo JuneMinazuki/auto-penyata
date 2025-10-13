@@ -19,8 +19,14 @@ private:
     // Draw title and report name
     static int drawTitle(QPainter& painter, int yPos, QString companyName, QString reportName, int pageWidth, int pageHeight);
 
+    // Draw untung kasar
+    static int drawUntungKasar(QPainter& painter, int yPos, const QVariantMap apurData);
+
     // Create a QRect for the value columns
     static QRect createValueRect(int xLeft, int yBaseLine, const QFontMetrics& fm);
+
+    // Create row of account
+    static int generateRow(QPainter& painter, const QString& accountName, const QVariant& accountValue, int xCol, int yPos, bool neg = false);
 
     // Font
     static QFont titleFont;
