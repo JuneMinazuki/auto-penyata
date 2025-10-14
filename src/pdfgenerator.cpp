@@ -11,7 +11,11 @@
 QFont PdfGenerator::titleFont("Arial", 14, QFont::Bold);
 QFont PdfGenerator::headerFont("Arial", 12, QFont::Bold);
 QFont PdfGenerator::regularFont("Arial", 12);
-QFont PdfGenerator::smallFont("Arial", 8);
+QFont PdfGenerator::underlineFont = [] {
+    QFont font("Arial", 12, QFont::Bold);
+    font.setUnderline(true);
+    return font;
+}();
 
 // Margin
 const int PdfGenerator::margin = 150;
@@ -41,7 +45,7 @@ void PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
 
     // Set line width
     QPen pen = painter.pen(); 
-    pen.setWidth(4);
+    pen.setWidth(3);
     painter.setPen(pen);
 
     // Get data from setting Json
@@ -128,8 +132,21 @@ int PdfGenerator::drawTitle(QPainter& painter, int yPos, QString companyName, QS
 int PdfGenerator::drawUntungKasar(QPainter& painter, int yPos, const QVariantMap apurData){
     painter.setFont(regularFont);
 
+    // Jualan / Pulangan Jualan / Jualan Bersih
     yPos = generateRow(painter, "Jualan", apurData["Jualan"], xCol3, yPos);
-    yPos = generateRow(painter, "- Pulangan Jualan", apurData["Pulangan Jualan"], xCol3, yPos, true);
+
+    if (apurData["Pulangan Jualan"] != "0.00"){
+        // Find jualan bersih
+        QVariant jualanBersih = apurData["Jualan"].toDouble() - apurData["Pulangan Jualan"].toDouble();
+
+        yPos = generateRow(painter, "- Pulangan Jualan", apurData["Pulangan Jualan"], xCol3, yPos, true);
+        drawLine(painter, xCol3, yPos);
+        yPos = generateRow(painter, "Jualan Bersih", jualanBersih, xCol3, yPos);
+    }
+
+    // Kos Jualan (Inventori awal)
+    yPos = drawHeader(painter, "Kos Jualan", yPos);
+    yPos = generateRow(painter, "Inventori Awal", apurData["Inventori Awal"], xCol2, yPos);
 
     return yPos;
 }
@@ -138,7 +155,7 @@ int PdfGenerator::drawUntungKasar(QPainter& painter, int yPos, const QVariantMap
 QRect PdfGenerator::createValueRect(int xLeft, int yBaseLine, const QFontMetrics& fm){
     int yTop = yBaseLine - fm.ascent();
     int height = fm.height();
-    return QRect(xLeft, yTop, columnWidth, height);
+    return QRect(xLeft, yTop, columnWidth - 20, height);
 }
 
 // Create row of account
@@ -150,10 +167,32 @@ int PdfGenerator::generateRow(QPainter& painter, const QString& accountName, con
     painter.drawText(xStartLeft, yPos, accountName);
 
     // Draw the value
+    QString stringValue = QString::number(accountValue.toDouble(), 'f', 2);
+    QString value = (neg) ? QString("(%1)").arg(stringValue) : stringValue;
+
     QRect valueRect = createValueRect(xCol, yPos, fm);
-    QString value = (neg) ? QString("(%1)").arg(accountValue.toString()) : accountValue.toString();
     painter.drawText(valueRect, Qt::AlignRight, value);
 
     yPos += fm.height() * 1.4;
+    return yPos;
+}
+
+// Draw line
+void PdfGenerator::drawLine(QPainter& painter, int xCol, int yPos){
+    painter.drawLine(xCol, yPos - 52.4, xCol + columnWidth, yPos - 52.4);
+}
+
+// Draw line
+int PdfGenerator::drawHeader(QPainter& painter, const QString& header, int yPos){
+    // Get font metrics
+    painter.setFont(underlineFont);
+    const QFontMetrics fm = painter.fontMetrics();
+    yPos += fm.height() * 1.4;
+
+    // Draw the name of account
+    painter.drawText(xStartLeft, yPos, header);
+    yPos += fm.height() * 1.4;
+
+    painter.setFont(regularFont);
     return yPos;
 }

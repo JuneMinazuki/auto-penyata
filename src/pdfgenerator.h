@@ -28,11 +28,17 @@ private:
     // Create row of account
     static int generateRow(QPainter& painter, const QString& accountName, const QVariant& accountValue, int xCol, int yPos, bool neg = false);
 
+    // Draw line
+    static void drawLine(QPainter& painter, int xCol, int yPos);
+
+    // Draw header
+    static int drawHeader(QPainter& painter, const QString& header, int yPos);
+
     // Font
     static QFont titleFont;
     static QFont headerFont;
     static QFont regularFont;
-    static QFont smallFont;
+    static QFont underlineFont;
 
     // Margin
     static const int margin;
