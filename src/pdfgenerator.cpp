@@ -59,13 +59,17 @@ void PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
     QString reportName = QString("Akaun Perdagangan bagi tempoh berakhir %1").arg(reportDate);
 
     // Draw title
-    yPos = drawTitle(painter, yPos, companyName, reportName, pageWidth, pageHeight);
+    yPos = drawTitle(painter, yPos, companyName, reportName, pageWidth);
 
-    // Get data from apur Json
-    UntungKasarData apurData = calculateApurValue(data.value("apur.json"));
+    // Calculate data
+    UntungKasarData apurData = calculateUntungKasar(data.value("apur.json"));
+    UntungBersihData untungBersihData = calculateUntungBersih(data.value("hasil.json"), data.value("belanja.json"), apurData.untungKasar);
 
     // Draw untung kasar
-    yPos = drawUntungKasar(painter, yPos, apurData);
+    yPos = drawUntungKasar(painter, yPos, apurData, (untungBersihData.hasHasil || untungBersihData.hasBelanja));
+
+    // Draw untung bersih
+    yPos = drawUntungBersih(painter, yPos, untungBersihData);
 
     // Finish drawing
     painter.end();
@@ -93,7 +97,7 @@ std::unique_ptr<QPdfWriter> PdfGenerator::setupPDF(QString fileName) {
 }
 
 // Draw title and report name
-int PdfGenerator::drawTitle(QPainter& painter, int yPos, QString companyName, QString reportName, int pageWidth, int pageHeight){
+int PdfGenerator::drawTitle(QPainter& painter, int yPos, QString companyName, QString reportName, int pageWidth){
     // Draw Title
     painter.setFont(titleFont);
     QRect namaPerniagaanRect(xStartLeft, yPos, pageWidth, rectHeight);
@@ -106,9 +110,6 @@ int PdfGenerator::drawTitle(QPainter& painter, int yPos, QString companyName, QS
 
     // Draw a line under the title
     painter.drawLine(xStartLeft, yPos, xStartLeft + pageWidth, yPos);
-    painter.drawLine(xCol1, yPos, xCol1, pageHeight); 
-    painter.drawLine(xCol2, yPos, xCol2, pageHeight); 
-    painter.drawLine(xCol3, yPos, xCol3, pageHeight); 
     yPos += 75;
 
     // Draw value column headers (RM)
@@ -129,7 +130,7 @@ int PdfGenerator::drawTitle(QPainter& painter, int yPos, QString companyName, QS
 }
 
 // Draw untung kasar
-int PdfGenerator::drawUntungKasar(QPainter& painter, int yPos, const UntungKasarData apurData){
+int PdfGenerator::drawUntungKasar(QPainter& painter, int yPos, const UntungKasarData& apurData, bool containHasilBelanja){
     painter.setFont(regularFont);
 
     // Jualan / Pulangan Jualan / Jualan Bersih
@@ -198,18 +199,69 @@ int PdfGenerator::drawUntungKasar(QPainter& painter, int yPos, const UntungKasar
 
     // Untung kasar / rugi kasar
     drawLine(painter, xCol3, yPos);
-    if (apurData.untungKasar >= 0){
-        yPos = generateRow(painter, "Untung Kasar", apurData.untungKasar, xCol3, yPos);
+    if (containHasilBelanja){
+        if (apurData.untungKasar >= 0){
+            yPos = generateRow(painter, "Untung Kasar", apurData.untungKasar, xCol3, yPos);
+        }
+        else {
+            yPos = generateRow(painter, "Rugi Kasar", -apurData.untungKasar, xCol3, yPos, true);
+        }
     }
     else {
-        yPos = generateRow(painter, "Rugi Kasar", -apurData.untungKasar, xCol3, yPos, true);
+        if (apurData.untungKasar >= 0){
+            yPos = generateRow(painter, "Untung Bersih", apurData.untungKasar, xCol3, yPos);
+        }
+        else {
+            yPos = generateRow(painter, "Rugi Bersih", -apurData.untungKasar, xCol3, yPos, true);
+        }
+        drawLine(painter, xCol3, yPos);
     }
 
     return yPos;
 }
 
-// Calculate value
-PdfGenerator::UntungKasarData PdfGenerator::calculateApurValue(const QVariantMap data){
+// Draw untung bersih
+int PdfGenerator::drawUntungBersih(QPainter& painter, int yPos, const UntungBersihData& data){
+    // Hasil
+    if (data.hasHasil){
+        yPos = drawHeader(painter, "+ Hasil", yPos);
+
+        for (const QPair<QString, double> &item : data.hasilAccount){
+            yPos = generateRow(painter, item.first, item.second, xCol2, yPos);
+        }
+
+        drawLine(painter, xCol2, yPos);
+        yPos = generateRow(painter, "", data.totalHasil, xCol3, yPos);
+        drawLine(painter, xCol3, yPos);
+        if (data.hasBelanja) {
+            yPos = generateRow(painter, "", data.tambahHasil, xCol3, yPos);
+        }
+        else {
+            yPos = generateRow(painter, "Untung Bersih", data.tambahHasil, xCol3, yPos);
+            drawLine(painter, xCol3, yPos);
+        }
+    }
+
+    // Belanja
+    if (data.hasBelanja){
+        yPos = drawHeader(painter, "- Belanja", yPos);
+
+        for (const QPair<QString, double> &item : data.belanjaAccount){
+            yPos = generateRow(painter, item.first, item.second, xCol2, yPos);
+        }
+
+        drawLine(painter, xCol2, yPos);
+        yPos = generateRow(painter, "", data.totalBelanja, xCol3, yPos, true);
+        drawLine(painter, xCol3, yPos);
+        yPos = generateRow(painter, "Untung Bersih", data.untungBersih, xCol3, yPos);
+        drawLine(painter, xCol3, yPos);
+    }
+    
+    return yPos;
+}
+
+// Calculate untung kasar
+PdfGenerator::UntungKasarData PdfGenerator::calculateUntungKasar(const QVariantMap& data){
     PdfGenerator::UntungKasarData apurData;
 
     // Jualan
@@ -247,6 +299,43 @@ PdfGenerator::UntungKasarData PdfGenerator::calculateApurValue(const QVariantMap
     apurData.untungKasar = apurData.jualanBersih - apurData.kosJualan;
 
     return apurData;
+}
+
+// Calculate untung bersih
+PdfGenerator::UntungBersihData PdfGenerator::calculateUntungBersih(const QVariantMap& hasilData, const QVariantMap& belanjaData, const double untungKasar){
+    PdfGenerator::UntungBersihData untungBersihData;
+
+    // Hasil
+    for (const QString &key : hasilData.keys()) {
+        if (key == "_placeholder"){
+            continue;
+        }
+
+        double value = hasilData[key].toDouble();
+        if (value != 0.0) {
+            untungBersihData.hasilAccount.append({key, value});
+            untungBersihData.totalHasil += value;
+        }
+    }
+    untungBersihData.tambahHasil = untungKasar + untungBersihData.totalHasil;
+    untungBersihData.hasHasil = !untungBersihData.hasilAccount.isEmpty();
+
+    // Belanja
+    for (const QString &key : belanjaData.keys()) {
+        if (key == "_placeholder"){
+            continue;
+        }
+
+        double value = belanjaData[key].toDouble();
+        if (value != 0.0) {
+            untungBersihData.belanjaAccount.append({key, value});
+            untungBersihData.totalBelanja += value;
+        }
+    }
+    untungBersihData.untungBersih = untungBersihData.tambahHasil - untungBersihData.totalBelanja;
+    untungBersihData.hasBelanja = !untungBersihData.belanjaAccount.isEmpty();
+
+    return untungBersihData;
 }
 
 // Create a QRect for the value columns

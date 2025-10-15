@@ -38,18 +38,37 @@ private:
         bool hasPulanganBelian;
         bool hasKosBelianItems;
     };
+    struct UntungBersihData{
+        // Hasil
+        QList<QPair<QString, double>> hasilAccount;
+        double totalHasil;
+
+        // Belanja
+        QList<QPair<QString, double>> belanjaAccount;
+        double totalBelanja;
+
+        // Untung bersih
+        double tambahHasil;
+        double untungBersih;
+
+        // Flags for drawing logic
+        bool hasHasil;
+        bool hasBelanja;
+    };
 
     // Setup Pdf
     static std::unique_ptr<QPdfWriter> setupPDF(QString fileName);
 
     // Draw title and report name
-    static int drawTitle(QPainter& painter, int yPos, QString companyName, QString reportName, int pageWidth, int pageHeight);
+    static int drawTitle(QPainter& painter, int yPos, QString companyName, QString reportName, int pageWidth);
 
-    // Draw untung kasar
-    static int drawUntungKasar(QPainter& painter, int yPos, const UntungKasarData apurData);
+    // Draw apur
+    static int drawUntungKasar(QPainter& painter, int yPos, const UntungKasarData& apurData, bool containHasilBelanja);
+    static int drawUntungBersih(QPainter& painter, int yPos, const UntungBersihData& data);
 
     // Calculate value
-    static UntungKasarData calculateApurValue(const QVariantMap data);
+    static UntungKasarData calculateUntungKasar(const QVariantMap& data);
+    static UntungBersihData calculateUntungBersih(const QVariantMap& hasilData, const QVariantMap& belanjaData, const double untungKasar);
 
     // Create a QRect for the value columns
     static QRect createValueRect(int xLeft, int yBaseLine, const QFontMetrics& fm);
