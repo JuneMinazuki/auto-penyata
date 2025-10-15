@@ -10,7 +10,7 @@ class Belanja : public PageManager
 public:
     explicit Belanja(Ui::MainWindow *m_ui, QObject *parent = nullptr); 
 
-    // When Apur page is open
+    // When Belanja page is open
     void handlePageActivation() override;
 };
 #endif // BELANJA_H

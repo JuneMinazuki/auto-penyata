@@ -143,7 +143,7 @@ QListWidget::item:selected {
 }</string>
     </property>
     <property name="currentIndex">
-     <number>8</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="APUR">
      <widget class="QLabel" name="label_apur">
@@ -383,14 +383,140 @@ QPushButton:pressed {
      </widget>
     </widget>
     <widget class="QWidget" name="Hasil">
-     <widget class="QLabel" name="label_3">
+     <widget class="QPushButton" name="button_hasil_addAccount">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>500</x>
+        <y>520</y>
+        <width>110</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    background-color: #181818;
+    color: #e6e6e6;
+    border: 1px solid #cccccc; 
+    border-radius: 5px; 
+    padding: 7px 10px;
+}
+
+QPushButton:hover {
+    background-color: #404040;
+}
+
+QPushButton:pressed {
+    background-color: #010101;
+}</string>
+      </property>
+      <property name="text">
+       <string>Add</string>
+      </property>
+     </widget>
+     <widget class="QScrollArea" name="scrollable_hasil">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>75</y>
+        <width>590</width>
+        <height>420</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QScrollArea {
+	border: none;
+    background-color: #333333;
+}
+
+#scrollAreaWidgetContents {
+    background-color: #333333;
+}
+
+QScrollBar:vertical {
+    border: none;
+    background: transparent;
+    width: 10px;
+}
+
+QScrollBar::handle:vertical {
+    background: #A0A0A0; 
+    min-height: 25px;
+    border-radius: 5px; 
+}
+
+QScrollBar::handle:vertical:hover,
+QScrollBar::handle:vertical:pressed {
+    background: #787878;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    border: none;
+    background: none;
+    height: 0px;
+}
+
+QScrollBar::add-page:vertical, 
+QScrollBar::sub-page:vertical {
+    background: none; 
+}
+
+QScrollBar:horizontal {
+    border: none;
+    background: none;
+    height: 0px;
+    margin: 0;
+}</string>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="hasil_scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>590</width>
+         <height>420</height>
+        </rect>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QWidget#hasil_scrollAreaWidgetContents {background-color: transparent; border: none;}</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QLabel" name="label_hasil">
       <property name="geometry">
        <rect>
         <x>40</x>
-        <y>40</y>
-        <width>58</width>
-        <height>16</height>
+        <y>20</y>
+        <width>150</width>
+        <height>35</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>30</pointsize>
+        <bold>true</bold>
+        <underline>true</underline>
+        <kerning>true</kerning>
+       </font>
       </property>
       <property name="text">
        <string>Hasil</string>
@@ -758,21 +884,6 @@ QPushButton:pressed {
       </property>
       <property name="text">
        <string>Reset Successful!</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="Export">
-     <widget class="QLabel" name="label_10">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>40</y>
-        <width>131</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Export PDF</string>
       </property>
      </widget>
     </widget>

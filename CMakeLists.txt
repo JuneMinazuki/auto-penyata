@@ -36,6 +36,8 @@ set(PROJECT_SOURCES
     src/belanja.h
     src/pdfgenerator.cpp
     src/pdfgenerator.h
+    src/hasil.cpp
+    src/hasil.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

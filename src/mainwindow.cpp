@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Setup for each pages
     m_apurPage = new Apur(ui, this);
     m_belanjaPage = new Belanja(ui, this);
+    m_hasilPage = new Hasil(ui, this);
     m_settingPage = new Setting(ui, this);
 
     // Default page
@@ -93,6 +94,10 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
                 }
                 break;
             case 2: // Hasil
+                newPageManager = m_hasilPage;
+                if (m_hasilPage) {
+                    m_hasilPage->handlePageActivation();
+                }
                 break;
             case 3: // Aset Bukan Semasa
                 break;
