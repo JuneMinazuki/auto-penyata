@@ -185,9 +185,29 @@ QWidget* BlockManager::createDeletableBlock(const QString &key, QString value)
     // Reformat the text when the user is finished editing
     connect(valueEdit, &QLineEdit::editingFinished, this, &BlockManager::reformatValueOnFinish);
 
-    // Update m_accountValueInputs
-    connect(keyEdit, &QLineEdit::textChanged, valueEdit, [valueEdit](const QString &newKey) {
-        valueEdit->setObjectName(newKey);
+    // Check for duplicate keys
+    connect(keyEdit, &QLineEdit::editingFinished, this, [this, keyEdit, valueEdit]() {
+        QString oldKey = valueEdit->objectName();
+        QString newKey = keyEdit->text();
+
+        // Skip if key didn't change
+        if (oldKey == newKey) {
+            return;
+        }
+
+        // Check if the new key is a duplicate of another existing key
+        if (m_activeKeys.contains(newKey)) {
+            qWarning() << "Key " << newKey << " already exists";
+            keyEdit->setText(oldKey);
+        } 
+        else {
+            // Update the key in the tracking set
+            m_activeKeys.remove(oldKey);
+            m_activeKeys.insert(newKey);
+            
+            // Update m_accountValueInputs
+            valueEdit->setObjectName(newKey);
+        }
     });
 
     // Store the initial value in the map

@@ -36,6 +36,10 @@ void PageManager::handlePageDeactivation()
 
 void PageManager::handleAddButtonClick()
 {
+    // Save into Json
+    handlePageDeactivation();
+    jsonData = JsonManager::readJson(fileName);
+
     const QString newKey = "New account";
     
     // Find a unique key to prevent duplicate

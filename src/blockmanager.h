@@ -25,6 +25,7 @@ private slots:
 private:
     // Stores the QLineEdit pointer and its original value
     QHash<QLineEdit*, QString> m_accountValueInputs; 
+    QSet<QString> m_activeKeys;
 
     // Create block
     QWidget* createBasicBlock(const QString &key, QString value); // Basic block
