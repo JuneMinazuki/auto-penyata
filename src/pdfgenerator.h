@@ -13,6 +13,32 @@ public:
     static void createApurPdf(const QMap<QString, QVariantMap> &data);
 
 private:
+    // Data struct
+    struct UntungKasarData{
+        // Jualan
+        double jualan;
+        double pulanganJualan;
+        double jualanBersih;
+
+        // Kos Jualan
+        double inventoriAwal;
+        double belian;
+        double pulanganBelian;
+        double belianBersih;
+        QList<QPair<QString, double>> kosBelianAccount;
+        double kosBelian;
+        double kosBarangUntukDijual;
+        double inventoriAkhir;
+        double kosJualan;
+
+        // Untung kasar / rugi kasar
+        double untungKasar;
+
+        // Flags for drawing logic
+        bool hasPulanganBelian;
+        bool hasKosBelianItems;
+    };
+
     // Setup Pdf
     static std::unique_ptr<QPdfWriter> setupPDF(QString fileName);
 
@@ -20,7 +46,10 @@ private:
     static int drawTitle(QPainter& painter, int yPos, QString companyName, QString reportName, int pageWidth, int pageHeight);
 
     // Draw untung kasar
-    static int drawUntungKasar(QPainter& painter, int yPos, const QVariantMap apurData);
+    static int drawUntungKasar(QPainter& painter, int yPos, const UntungKasarData apurData);
+
+    // Calculate value
+    static UntungKasarData calculateApurValue(const QVariantMap data);
 
     // Create a QRect for the value columns
     static QRect createValueRect(int xLeft, int yBaseLine, const QFontMetrics& fm);

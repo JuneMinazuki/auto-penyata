@@ -62,7 +62,7 @@ void PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
     yPos = drawTitle(painter, yPos, companyName, reportName, pageWidth, pageHeight);
 
     // Get data from apur Json
-    QVariantMap apurData = data.value("apur.json");
+    UntungKasarData apurData = calculateApurValue(data.value("apur.json"));
 
     // Draw untung kasar
     yPos = drawUntungKasar(painter, yPos, apurData);
@@ -129,127 +129,124 @@ int PdfGenerator::drawTitle(QPainter& painter, int yPos, QString companyName, QS
 }
 
 // Draw untung kasar
-int PdfGenerator::drawUntungKasar(QPainter& painter, int yPos, const QVariantMap apurData){
+int PdfGenerator::drawUntungKasar(QPainter& painter, int yPos, const UntungKasarData apurData){
     painter.setFont(regularFont);
 
     // Jualan / Pulangan Jualan / Jualan Bersih
-    QVariant jualanBersih;
-    yPos = generateRow(painter, "Jualan", apurData["Jualan"], xCol3, yPos);
+    yPos = generateRow(painter, "Jualan", apurData.jualan, xCol3, yPos);
 
-    if (apurData["Pulangan Jualan"] != "0.00"){
-        // Find jualan bersih
-        jualanBersih = apurData["Jualan"].toDouble() - apurData["Pulangan Jualan"].toDouble();
-
-        yPos = generateRow(painter, "- Pulangan Jualan", apurData["Pulangan Jualan"], xCol3, yPos, true);
+    if (apurData.pulanganJualan != 0){
+        yPos = generateRow(painter, "- Pulangan Jualan", apurData.pulanganJualan, xCol3, yPos, true);
         drawLine(painter, xCol3, yPos);
-        yPos = generateRow(painter, "Jualan Bersih", jualanBersih, xCol3, yPos);
-    }
-    else {
-        jualanBersih = apurData["Jualan"];
-    }
-
-    // Cari kos Jualan
-    bool hasPulanganBelian = (apurData["Pulangan Belian"] != "0.00");
-    bool hasKosBelianItems = false;
-    QList<QString> kosBelianAccount = {"Angkutan Masuk", "Upah Atas Belian", "Duti Import", "Insurans Atas Belian"};
-
-    // Find at least 1 non-zero item from kosBelianAccount
-    for (const QString &key : kosBelianAccount) {
-        if (apurData[key].toString() != "0.00") {
-            hasKosBelianItems = true;
-            break;
-        }
+        yPos = generateRow(painter, "Jualan Bersih", apurData.jualanBersih, xCol3, yPos);
     }
 
     // Inventori Awal
     yPos = drawHeader(painter, "Kos Jualan", yPos);
-    yPos = generateRow(painter, "Inventori Awal", apurData["Inventori Awal"], xCol2, yPos);
+    yPos = generateRow(painter, "Inventori Awal", apurData.inventoriAwal, xCol2, yPos);
 
     // Belian / Pulangan belian / Belian bersih
-    QVariant kosBelian;
-    if (!hasPulanganBelian && !hasKosBelianItems) {
-        yPos = generateRow(painter, "Belian", apurData["Belian"], xCol2, yPos);
-        kosBelian = apurData["Belian"];
+    if (!apurData.hasPulanganBelian && !apurData.hasKosBelianItems) {
+        yPos = generateRow(painter, "Belian", apurData.belian, xCol2, yPos);
     }
     else {
-        yPos = generateRow(painter, "Belian", apurData["Belian"], xCol1, yPos);
+        yPos = generateRow(painter, "Belian", apurData.belian, xCol1, yPos);
 
-        if (hasPulanganBelian) {
-            // Find belian bersih
-            QVariant belianBersih = apurData["Belian"].toDouble() - apurData["Pulangan Belian"].toDouble();
-
-            yPos = generateRow(painter, "- Pulangan Belian", apurData["Pulangan Belian"], xCol1, yPos, true);
+        if (apurData.hasPulanganBelian) {
+            yPos = generateRow(painter, "- Pulangan Belian", apurData.pulanganBelian, xCol1, yPos, true);
             drawLine(painter, xCol1, yPos);
-            if (hasKosBelianItems){
-                yPos = generateRow(painter, "Belian Bersih", belianBersih, xCol1, yPos);
+            if (apurData.hasKosBelianItems){
+                yPos = generateRow(painter, "Belian Bersih", apurData.belianBersih, xCol1, yPos);
             }
             else{
-                yPos = generateRow(painter, "Belian Bersih", belianBersih, xCol2, yPos);
+                yPos = generateRow(painter, "Belian Bersih", apurData.belianBersih, xCol2, yPos);
             }
-            
-            kosBelian = belianBersih;
-        }
-        else {
-            kosBelian = apurData["Belian"];
         }
 
-        if (hasKosBelianItems) {
-            // Kos belian
+        // Kos belian
+        if (apurData.hasKosBelianItems) {
             bool firstItemFound = false;
 
-            for (const QString &key : kosBelianAccount){
-                QString displayName;
-                if (apurData[key].toString() != "0.00") {
-                    // Add "+" to the first non-zero key
-                    if (!firstItemFound) {
-                        displayName = key.trimmed().prepend("+ ");
-                        firstItemFound = true;
-                    }
-                    else{
-                        displayName = key.trimmed().prepend("   ");
-                    }
-
-                    // Generate the row and calculate the total kos belian
-                    yPos = generateRow(painter, displayName, apurData[key], xCol1, yPos);
-                    kosBelian = kosBelian.toDouble() + apurData[key].toDouble();
-                }
+            for (const QPair<QString, double> &item : apurData.kosBelianAccount){
+                // Add "+" to the first non-zero key
+                QString label = firstItemFound ? "   " + item.first : "+ " + item.first;
+                
+                // Generate the row and calculate the total kos belian
+                yPos = generateRow(painter, label, item.second, xCol1, yPos);
+                firstItemFound = true;
             }
             drawLine(painter, xCol1, yPos);
-            yPos = generateRow(painter, "Kos Belian", kosBelian, xCol2, yPos);
+            yPos = generateRow(painter, "Kos Belian", apurData.kosBelian, xCol2, yPos);
         }
     }
 
     // Kos barang untuk dijual
-    QVariant kosBarangUntukDijual = apurData["Inventori Awal"].toDouble() + kosBelian.toDouble();
     drawLine(painter, xCol2, yPos);
-    yPos = generateRow(painter, "Kos Barang Untuk Dijual", kosBarangUntukDijual, xCol2, yPos);
+    yPos = generateRow(painter, "Kos Barang Untuk Dijual", apurData.kosBarangUntukDijual, xCol2, yPos);
 
     // Inventori Akhir
-    yPos = generateRow(painter, "- Inventori Akhir", apurData["Inventori Akhir"], xCol2, yPos, true);
+    yPos = generateRow(painter, "- Inventori Akhir", apurData.inventoriAkhir, xCol2, yPos, true);
 
     // Kos jualan
-    QVariant kosJualan = kosBarangUntukDijual.toDouble() - apurData["Inventori Akhir"].toDouble();
     drawLine(painter, xCol2, yPos);
-    if (kosJualan.toDouble() >= 0){
-        yPos = generateRow(painter, "Kos Jualan", kosJualan, xCol3, yPos, true);
+    if (apurData.kosJualan >= 0){
+        yPos = generateRow(painter, "Kos Jualan", apurData.kosJualan, xCol3, yPos, true);
     }
     else {
-        QVariant absKosJualan = -kosJualan.toDouble();
-        yPos = generateRow(painter, "Kos Jualan", absKosJualan, xCol3, yPos);
+        yPos = generateRow(painter, "Kos Jualan", -apurData.kosJualan, xCol3, yPos);
     }
 
     // Untung kasar / rugi kasar
-    QVariant untungKasar = jualanBersih.toDouble() - kosJualan.toDouble();
     drawLine(painter, xCol3, yPos);
-    if (untungKasar.toDouble() >= 0){
-        yPos = generateRow(painter, "Untung Kasar", untungKasar, xCol3, yPos);
+    if (apurData.untungKasar >= 0){
+        yPos = generateRow(painter, "Untung Kasar", apurData.untungKasar, xCol3, yPos);
     }
     else {
-        QVariant absUntungKasar = -untungKasar.toDouble();
-        yPos = generateRow(painter, "Rugi Kasar", absUntungKasar, xCol3, yPos, true);
+        yPos = generateRow(painter, "Rugi Kasar", -apurData.untungKasar, xCol3, yPos, true);
     }
 
     return yPos;
+}
+
+// Calculate value
+PdfGenerator::UntungKasarData PdfGenerator::calculateApurValue(const QVariantMap data){
+    PdfGenerator::UntungKasarData apurData;
+
+    // Jualan
+    apurData.jualan = data["Jualan"].toDouble();
+    apurData.pulanganJualan = data["Pulangan Jualan"].toDouble();
+    apurData.jualanBersih = apurData.jualan - apurData.pulanganJualan;
+
+    // Belian / Inventori Awal
+    apurData.inventoriAwal = data["Inventori Awal"].toDouble();
+    apurData.belian = data["Belian"].toDouble();
+    apurData.pulanganBelian = data["Pulangan Belian"].toDouble();
+    apurData.belianBersih = apurData.belian - apurData.pulanganBelian;
+    apurData.hasPulanganBelian = (apurData.pulanganBelian != 0.0);
+
+    // Kos belian
+    apurData.kosBelian = apurData.belianBersih;
+    const QList<QString> kosBelianKeys = {"Angkutan Masuk", "Upah Atas Belian", "Duti Import", "Insurans Atas Belian"};
+    for (const QString& key : kosBelianKeys) {
+        double value = data[key].toDouble();
+        if (value != 0.0) {
+            apurData.kosBelianAccount.append({key, value});
+            apurData.kosBelian += value;
+        }
+    }
+    apurData.hasKosBelianItems = !apurData.kosBelianAccount.isEmpty();
+
+    // Kos barang untuk dijual
+    apurData.kosBarangUntukDijual = apurData.inventoriAwal + apurData.kosBelian;
+
+    // Kos Jualan
+    apurData.inventoriAkhir = data["Inventori Akhir"].toDouble();
+    apurData.kosJualan = apurData.kosBarangUntukDijual - apurData.inventoriAkhir;
+
+    // Untung kasar / rugi kasar
+    apurData.untungKasar = apurData.jualanBersih - apurData.kosJualan;
+
+    return apurData;
 }
 
 // Create a QRect for the value columns
