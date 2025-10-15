@@ -66,10 +66,10 @@ void PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
     UntungBersihData untungBersihData = calculateUntungBersih(data.value("hasil.json"), data.value("belanja.json"), apurData.untungKasar);
 
     // Draw untung kasar
-    yPos = drawUntungKasar(painter, yPos, apurData, (untungBersihData.hasHasil || untungBersihData.hasBelanja));
+    yPos = drawUntungKasar(painter, writer.get(), yPos, apurData, (untungBersihData.hasHasil || untungBersihData.hasBelanja));
 
     // Draw untung bersih
-    yPos = drawUntungBersih(painter, yPos, untungBersihData);
+    yPos = drawUntungBersih(painter, writer.get(), yPos, untungBersihData);
 
     // Finish drawing
     painter.end();
@@ -112,55 +112,43 @@ int PdfGenerator::drawTitle(QPainter& painter, int yPos, QString companyName, QS
     painter.drawLine(xStartLeft, yPos, xStartLeft + pageWidth, yPos);
     yPos += 75;
 
-    // Draw value column headers (RM)
-    painter.setFont(headerFont);
-    QFontMetrics headerFm = painter.fontMetrics();
-
-    QRect col1Rect = createValueRect(xCol1, yPos, headerFm);
-    painter.drawText(col1Rect, Qt::AlignCenter, "RM");
-
-    QRect col2Rect = createValueRect(xCol2, yPos, headerFm);
-    painter.drawText(col2Rect, Qt::AlignCenter, "RM");
-
-    QRect col3Rect = createValueRect(xCol3, yPos, headerFm);
-    painter.drawText(col3Rect, Qt::AlignCenter, "RM");
-    yPos += headerFm.height() * 1.4;
+    yPos = drawColumnHeader(painter, yPos);
 
     return yPos;
 }
 
 // Draw untung kasar
-int PdfGenerator::drawUntungKasar(QPainter& painter, int yPos, const UntungKasarData& apurData, bool containHasilBelanja){
+int PdfGenerator::drawUntungKasar(QPainter& painter, QPdfWriter* writer, int yPos, const UntungKasarData& apurData, bool containHasilBelanja){
     painter.setFont(regularFont);
 
     // Jualan / Pulangan Jualan / Jualan Bersih
-    yPos = generateRow(painter, "Jualan", apurData.jualan, xCol3, yPos);
+    yPos = generateRow(painter, writer, "Jualan", apurData.jualan, xCol3, yPos);
 
     if (apurData.pulanganJualan != 0){
-        yPos = generateRow(painter, "- Pulangan Jualan", apurData.pulanganJualan, xCol3, yPos, true);
+        yPos = generateRow(painter, writer, "- Pulangan Jualan", apurData.pulanganJualan, xCol3, yPos, true);
         drawLine(painter, xCol3, yPos);
-        yPos = generateRow(painter, "Jualan Bersih", apurData.jualanBersih, xCol3, yPos);
+        yPos = generateRow(painter, writer, "Jualan Bersih", apurData.jualanBersih, xCol3, yPos);
     }
 
     // Inventori Awal
-    yPos = drawHeader(painter, "Kos Jualan", yPos);
-    yPos = generateRow(painter, "Inventori Awal", apurData.inventoriAwal, xCol2, yPos);
+    yPos = drawHeader(painter, writer, "Kos Jualan", yPos);
+    yPos = generateRow(painter, writer, "Inventori Awal", apurData.inventoriAwal, xCol2, yPos);
 
     // Belian / Pulangan belian / Belian bersih
     if (!apurData.hasPulanganBelian && !apurData.hasKosBelianItems) {
-        yPos = generateRow(painter, "Belian", apurData.belian, xCol2, yPos);
+        yPos = generateRow(painter, writer, "Belian", apurData.belian, xCol2, yPos);
     }
     else {
-        yPos = generateRow(painter, "Belian", apurData.belian, xCol1, yPos);
+        yPos = generateRow(painter, writer, "Belian", apurData.belian, xCol1, yPos);
 
         if (apurData.hasPulanganBelian) {
-            yPos = generateRow(painter, "- Pulangan Belian", apurData.pulanganBelian, xCol1, yPos, true);
+            yPos = generateRow(painter, writer, "- Pulangan Belian", apurData.pulanganBelian, xCol1, yPos, true);
             drawLine(painter, xCol1, yPos);
             if (apurData.hasKosBelianItems){
-                yPos = generateRow(painter, "Belian Bersih", apurData.belianBersih, xCol1, yPos);
+                yPos = generateRow(painter, writer, "Belian Bersih", apurData.belianBersih, xCol1, yPos);
             }
             else{
-                yPos = generateRow(painter, "Belian Bersih", apurData.belianBersih, xCol2, yPos);
+                yPos = generateRow(painter, writer, "Belian Bersih", apurData.belianBersih, xCol2, yPos);
             }
         }
 
@@ -173,46 +161,46 @@ int PdfGenerator::drawUntungKasar(QPainter& painter, int yPos, const UntungKasar
                 QString label = firstItemFound ? "   " + item.first : "+ " + item.first;
                 
                 // Generate the row and calculate the total kos belian
-                yPos = generateRow(painter, label, item.second, xCol1, yPos);
+                yPos = generateRow(painter, writer, label, item.second, xCol1, yPos);
                 firstItemFound = true;
             }
             drawLine(painter, xCol1, yPos);
-            yPos = generateRow(painter, "Kos Belian", apurData.kosBelian, xCol2, yPos);
+            yPos = generateRow(painter, writer, "Kos Belian", apurData.kosBelian, xCol2, yPos);
         }
     }
 
     // Kos barang untuk dijual
     drawLine(painter, xCol2, yPos);
-    yPos = generateRow(painter, "Kos Barang Untuk Dijual", apurData.kosBarangUntukDijual, xCol2, yPos);
+    yPos = generateRow(painter, writer, "Kos Barang Untuk Dijual", apurData.kosBarangUntukDijual, xCol2, yPos);
 
     // Inventori Akhir
-    yPos = generateRow(painter, "- Inventori Akhir", apurData.inventoriAkhir, xCol2, yPos, true);
+    yPos = generateRow(painter, writer, "- Inventori Akhir", apurData.inventoriAkhir, xCol2, yPos, true);
 
     // Kos jualan
     drawLine(painter, xCol2, yPos);
     if (apurData.kosJualan >= 0){
-        yPos = generateRow(painter, "Kos Jualan", apurData.kosJualan, xCol3, yPos, true);
+        yPos = generateRow(painter, writer, "Kos Jualan", apurData.kosJualan, xCol3, yPos, true);
     }
     else {
-        yPos = generateRow(painter, "Kos Jualan", -apurData.kosJualan, xCol3, yPos);
+        yPos = generateRow(painter, writer, "Kos Jualan", -apurData.kosJualan, xCol3, yPos);
     }
 
     // Untung kasar / rugi kasar
     drawLine(painter, xCol3, yPos);
     if (containHasilBelanja){
         if (apurData.untungKasar >= 0){
-            yPos = generateRow(painter, "Untung Kasar", apurData.untungKasar, xCol3, yPos);
+            yPos = generateRow(painter, writer, "Untung Kasar", apurData.untungKasar, xCol3, yPos);
         }
         else {
-            yPos = generateRow(painter, "Rugi Kasar", -apurData.untungKasar, xCol3, yPos, true);
+            yPos = generateRow(painter, writer, "Rugi Kasar", -apurData.untungKasar, xCol3, yPos, true);
         }
     }
     else {
         if (apurData.untungKasar >= 0){
-            yPos = generateRow(painter, "Untung Bersih", apurData.untungKasar, xCol3, yPos);
+            yPos = generateRow(painter, writer, "Untung Bersih", apurData.untungKasar, xCol3, yPos);
         }
         else {
-            yPos = generateRow(painter, "Rugi Bersih", -apurData.untungKasar, xCol3, yPos, true);
+            yPos = generateRow(painter, writer, "Rugi Bersih", -apurData.untungKasar, xCol3, yPos, true);
         }
         drawLine(painter, xCol3, yPos);
     }
@@ -221,39 +209,49 @@ int PdfGenerator::drawUntungKasar(QPainter& painter, int yPos, const UntungKasar
 }
 
 // Draw untung bersih
-int PdfGenerator::drawUntungBersih(QPainter& painter, int yPos, const UntungBersihData& data){
+int PdfGenerator::drawUntungBersih(QPainter& painter, QPdfWriter* writer, int yPos, const UntungBersihData& data){
     // Hasil
     if (data.hasHasil){
-        yPos = drawHeader(painter, "+ Hasil", yPos);
+        yPos = drawHeader(painter, writer, "+ Hasil", yPos);
 
         for (const QPair<QString, double> &item : data.hasilAccount){
-            yPos = generateRow(painter, item.first, item.second, xCol2, yPos);
+            yPos = generateRow(painter, writer, item.first, item.second, xCol2, yPos);
         }
 
         drawLine(painter, xCol2, yPos);
-        yPos = generateRow(painter, "", data.totalHasil, xCol3, yPos);
+        yPos = generateRow(painter, writer, "", data.totalHasil, xCol3, yPos);
         drawLine(painter, xCol3, yPos);
         if (data.hasBelanja) {
-            yPos = generateRow(painter, "", data.tambahHasil, xCol3, yPos);
+            yPos = generateRow(painter, writer, "", data.tambahHasil, xCol3, yPos);
         }
         else {
-            yPos = generateRow(painter, "Untung Bersih", data.tambahHasil, xCol3, yPos);
+            if (data.tambahHasil >= 0){
+                yPos = generateRow(painter, writer, "Untung Bersih", data.tambahHasil, xCol3, yPos);
+            }
+            else {
+                yPos = generateRow(painter, writer, "Rugi Bersih", -data.tambahHasil, xCol3, yPos, true);
+            }
             drawLine(painter, xCol3, yPos);
         }
     }
 
     // Belanja
     if (data.hasBelanja){
-        yPos = drawHeader(painter, "- Belanja", yPos);
+        yPos = drawHeader(painter, writer, "- Belanja", yPos);
 
         for (const QPair<QString, double> &item : data.belanjaAccount){
-            yPos = generateRow(painter, item.first, item.second, xCol2, yPos);
+            yPos = generateRow(painter, writer, item.first, item.second, xCol2, yPos);
         }
 
         drawLine(painter, xCol2, yPos);
-        yPos = generateRow(painter, "", data.totalBelanja, xCol3, yPos, true);
+        yPos = generateRow(painter, writer, "", data.totalBelanja, xCol3, yPos, true);
         drawLine(painter, xCol3, yPos);
-        yPos = generateRow(painter, "Untung Bersih", data.untungBersih, xCol3, yPos);
+        if (data.untungBersih >= 0){
+            yPos = generateRow(painter, writer, "Untung Bersih", data.untungBersih, xCol3, yPos);
+        }
+        else {
+            yPos = generateRow(painter, writer, "Rugi Bersih", -data.untungBersih, xCol3, yPos, true);
+        }
         drawLine(painter, xCol3, yPos);
     }
     
@@ -346,7 +344,10 @@ QRect PdfGenerator::createValueRect(int xLeft, int yBaseLine, const QFontMetrics
 }
 
 // Create row of account
-int PdfGenerator::generateRow(QPainter& painter, const QString& accountName, const QVariant& accountValue, int xCol, int yPos, bool neg){
+int PdfGenerator::generateRow(QPainter& painter, QPdfWriter* writer, const QString& accountName, const QVariant& accountValue, int xCol, int yPos, bool neg){
+    // Check if out of bound
+    yPos = checkYPos(painter, writer, yPos);
+    
     // Get font metrics for calculating rectangle height
     const QFontMetrics fm = painter.fontMetrics();
     
@@ -370,7 +371,10 @@ void PdfGenerator::drawLine(QPainter& painter, int xCol, int yPos){
 }
 
 // Draw line
-int PdfGenerator::drawHeader(QPainter& painter, const QString& header, int yPos){
+int PdfGenerator::drawHeader(QPainter& painter, QPdfWriter* writer, const QString& header, int yPos){
+    // Check if out of bound
+    yPos = checkYPos(painter, writer, yPos);
+    
     // Get font metrics
     painter.setFont(underlineFont);
     const QFontMetrics fm = painter.fontMetrics();
@@ -381,5 +385,41 @@ int PdfGenerator::drawHeader(QPainter& painter, const QString& header, int yPos)
     yPos += fm.height() * 1.4;
 
     painter.setFont(regularFont);
+    return yPos;
+}
+
+// Draw column header
+int PdfGenerator::drawColumnHeader(QPainter& painter, int yPos){
+    // Draw value column headers (RM)
+    painter.setFont(headerFont);
+    QFontMetrics headerFm = painter.fontMetrics();
+
+    QRect col1Rect = createValueRect(xCol1, yPos, headerFm);
+    painter.drawText(col1Rect, Qt::AlignCenter, "RM");
+
+    QRect col2Rect = createValueRect(xCol2, yPos, headerFm);
+    painter.drawText(col2Rect, Qt::AlignCenter, "RM");
+
+    QRect col3Rect = createValueRect(xCol3, yPos, headerFm);
+    painter.drawText(col3Rect, Qt::AlignCenter, "RM");
+    yPos += headerFm.height() * 1.4;
+
+    qDebug() << yPos;
+
+    return yPos;
+}
+
+// Setup new page
+int PdfGenerator::checkYPos(QPainter& painter, QPdfWriter* writer, int yPos){
+    if (yPos >= 3336){
+        if (!writer->newPage()) {
+            qWarning() << "Failed to create a new page!";
+            return -1;
+        }
+
+        yPos = drawColumnHeader(painter, margin);
+        painter.setFont(regularFont);
+    }
+
     return yPos;
 }

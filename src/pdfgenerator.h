@@ -63,8 +63,8 @@ private:
     static int drawTitle(QPainter& painter, int yPos, QString companyName, QString reportName, int pageWidth);
 
     // Draw apur
-    static int drawUntungKasar(QPainter& painter, int yPos, const UntungKasarData& apurData, bool containHasilBelanja);
-    static int drawUntungBersih(QPainter& painter, int yPos, const UntungBersihData& data);
+    static int drawUntungKasar(QPainter& painter, QPdfWriter* writer, int yPos, const UntungKasarData& apurData, bool containHasilBelanja);
+    static int drawUntungBersih(QPainter& painter, QPdfWriter* writer, int yPos, const UntungBersihData& data);
 
     // Calculate value
     static UntungKasarData calculateUntungKasar(const QVariantMap& data);
@@ -74,13 +74,19 @@ private:
     static QRect createValueRect(int xLeft, int yBaseLine, const QFontMetrics& fm);
 
     // Create row of account
-    static int generateRow(QPainter& painter, const QString& accountName, const QVariant& accountValue, int xCol, int yPos, bool neg = false);
+    static int generateRow(QPainter& painter, QPdfWriter* writer, const QString& accountName, const QVariant& accountValue, int xCol, int yPos, bool neg = false);
 
     // Draw line
     static void drawLine(QPainter& painter, int xCol, int yPos);
 
     // Draw header
-    static int drawHeader(QPainter& painter, const QString& header, int yPos);
+    static int drawHeader(QPainter& painter, QPdfWriter* writer, const QString& header, int yPos);
+
+    // Draw column header
+    static int drawColumnHeader(QPainter& painter, int yPos);
+
+    // Setup new page
+    static int checkYPos(QPainter& painter, QPdfWriter* writer, int yPos);
 
     // Font
     static QFont titleFont;
