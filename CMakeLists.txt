@@ -40,6 +40,14 @@ set(PROJECT_SOURCES
     src/hasil.h
     src/asetbukansemasa.cpp
     src/asetbukansemasa.h
+    src/asetsemasa.cpp
+    src/asetsemasa.h
+    src/liabilitibukansemasa.cpp
+    src/liabilitibukansemasa.h
+    src/liabilitisemasa.cpp
+    src/liabilitisemasa.h
+    src/ekuitipemilik.cpp
+    src/ekuitipemilik.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

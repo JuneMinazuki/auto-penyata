@@ -29,6 +29,10 @@ MainWindow::MainWindow(QWidget *parent)
     m_belanjaPage = new Belanja(ui, this);
     m_hasilPage = new Hasil(ui, this);
     m_absPage = new AsetBukanSemasa(ui, this);
+    m_asPage = new AsetSemasa(ui, this);
+    m_lbsPage = new LiabilitiBukanSemasa(ui, this);
+    m_lsPage = new LiabilitiSemasa(ui, this);
+    m_epPage = new EkuitiPemilik(ui, this);
     m_settingPage = new Setting(ui, this);
 
     // Default page
@@ -107,12 +111,28 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
                 }
                 break;
             case 4: // Aset Semasa
+                newPageManager = m_asPage;
+                if (m_asPage) {
+                    m_asPage->handlePageActivation();
+                }
                 break;
             case 5: // Liabiliti Bukan Semasa
+                newPageManager = m_lbsPage;
+                if (m_lbsPage) {
+                    m_lbsPage->handlePageActivation();
+                }
                 break;
             case 6: // Liabiliti Semasa
+                newPageManager = m_lsPage;
+                if (m_lsPage) {
+                    m_lsPage->handlePageActivation();
+                }
                 break;
             case 7: // Ekuiti Pemilik
+                newPageManager = m_epPage;
+                if (m_epPage) {
+                    m_epPage->handlePageActivation();
+                }
                 break;
             case 8: // Setting
                 newPageManager = m_settingPage;

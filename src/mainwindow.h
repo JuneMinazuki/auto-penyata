@@ -6,6 +6,10 @@
 #include "belanja.h"
 #include "hasil.h"
 #include "asetbukansemasa.h"
+#include "asetsemasa.h"
+#include "liabilitibukansemasa.h"
+#include "liabilitisemasa.h"
+#include "ekuitipemilik.h"
 #include "pagemanager.h"
 #include "pdfgenerator.h"
 
@@ -41,6 +45,10 @@ private:
     Belanja *m_belanjaPage;
     Hasil *m_hasilPage;
     AsetBukanSemasa *m_absPage;
+    AsetSemasa *m_asPage;
+    LiabilitiBukanSemasa*m_lbsPage;
+    LiabilitiSemasa *m_lsPage;
+    EkuitiPemilik *m_epPage;
     Setting *m_settingPage;
 
     //VARIABLE

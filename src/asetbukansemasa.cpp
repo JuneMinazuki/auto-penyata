@@ -15,7 +15,7 @@ AsetBukanSemasa::AsetBukanSemasa(Ui::MainWindow *m_ui, QObject *parent)
     connect(addButton, &QPushButton::clicked, this, &AsetBukanSemasa::handleAddButtonClick); // Add button
 }
 
-// When Belanja page is open
+// When Aset Bukan Semasa page is open
 void AsetBukanSemasa::handlePageActivation()
 {
     qDebug() << "Switched to page: Aset Bukan Semasa";

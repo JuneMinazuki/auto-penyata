@@ -140,7 +140,7 @@ QListWidget::item:hover {
 }</string>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>7</number>
     </property>
     <widget class="QWidget" name="APUR">
      <widget class="QLabel" name="label_apur">
@@ -1130,8 +1130,8 @@ QPushButton:pressed {
      <widget class="QScrollArea" name="scrollable_lbs">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>110</y>
+        <x>30</x>
+        <y>90</y>
         <width>590</width>
         <height>428</height>
        </rect>
