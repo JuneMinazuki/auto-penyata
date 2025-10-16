@@ -214,12 +214,19 @@ int PdfGenerator::drawUntungBersih(QPainter& painter, QPdfWriter* writer, int yP
     if (data.hasHasil){
         yPos = drawHeader(painter, writer, "+ Hasil", yPos);
 
-        for (const QPair<QString, double> &item : data.hasilAccount){
-            yPos = generateRow(painter, writer, item.first, item.second, xCol2, yPos);
+        if (data.hasilAccount.count() == 1){
+            const QPair<QString, double>& item = data.hasilAccount.first();
+            yPos = generateRow(painter, writer, item.first, item.second, xCol3, yPos);
+        }
+        else{
+            for (const QPair<QString, double> &item : data.hasilAccount){
+                yPos = generateRow(painter, writer, item.first, item.second, xCol2, yPos);
+            }
+
+            drawLine(painter, xCol2, yPos);
+            yPos = generateRow(painter, writer, "", data.totalHasil, xCol3, yPos);
         }
 
-        drawLine(painter, xCol2, yPos);
-        yPos = generateRow(painter, writer, "", data.totalHasil, xCol3, yPos);
         drawLine(painter, xCol3, yPos);
         if (data.hasBelanja) {
             yPos = generateRow(painter, writer, "", data.tambahHasil, xCol3, yPos);
@@ -239,12 +246,19 @@ int PdfGenerator::drawUntungBersih(QPainter& painter, QPdfWriter* writer, int yP
     if (data.hasBelanja){
         yPos = drawHeader(painter, writer, "- Belanja", yPos);
 
-        for (const QPair<QString, double> &item : data.belanjaAccount){
-            yPos = generateRow(painter, writer, item.first, item.second, xCol2, yPos);
+        if (data.belanjaAccount.count() == 1){
+            const QPair<QString, double>& item = data.belanjaAccount.first();
+            yPos = generateRow(painter, writer, item.first, item.second, xCol3, yPos, true);
+        }
+        else{
+            for (const QPair<QString, double> &item : data.belanjaAccount){
+                yPos = generateRow(painter, writer, item.first, item.second, xCol2, yPos);
+            }
+
+            drawLine(painter, xCol2, yPos);
+            yPos = generateRow(painter, writer, "", data.totalBelanja, xCol3, yPos, true);
         }
 
-        drawLine(painter, xCol2, yPos);
-        yPos = generateRow(painter, writer, "", data.totalBelanja, xCol3, yPos, true);
         drawLine(painter, xCol3, yPos);
         if (data.untungBersih >= 0){
             yPos = generateRow(painter, writer, "Untung Bersih", data.untungBersih, xCol3, yPos);
@@ -403,8 +417,6 @@ int PdfGenerator::drawColumnHeader(QPainter& painter, int yPos){
     QRect col3Rect = createValueRect(xCol3, yPos, headerFm);
     painter.drawText(col3Rect, Qt::AlignCenter, "RM");
     yPos += headerFm.height() * 1.4;
-
-    qDebug() << yPos;
 
     return yPos;
 }

@@ -131,7 +131,7 @@ QListWidget::item:hover {
       <x>250</x>
       <y>0</y>
       <width>650</width>
-      <height>565</height>
+      <height>575</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -169,9 +169,9 @@ QListWidget::item:hover {
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>75</y>
+        <y>90</y>
         <width>590</width>
-        <height>460</height>
+        <height>470</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -229,13 +229,53 @@ QScrollBar:horizontal {
          <x>0</x>
          <y>0</y>
          <width>590</width>
-         <height>460</height>
+         <height>470</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QWidget#apur_scrollAreaWidgetContents {background-color: transparent; border: none;}</string>
        </property>
       </widget>
+     </widget>
+     <widget class="QLabel" name="label_apur_account">
+      <property name="geometry">
+       <rect>
+        <x>65</x>
+        <y>65</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>14</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Accounts</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_apur_amount">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>65</y>
+        <width>58</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>14</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Amount</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="Belanja">
@@ -265,9 +305,9 @@ QScrollBar:horizontal {
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>75</y>
+        <y>90</y>
         <width>590</width>
-        <height>420</height>
+        <height>428</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -325,7 +365,7 @@ QScrollBar:horizontal {
          <x>0</x>
          <y>0</y>
          <width>590</width>
-         <height>420</height>
+         <height>428</height>
         </rect>
        </property>
        <property name="autoFillBackground">
@@ -343,7 +383,7 @@ QScrollBar:horizontal {
       <property name="geometry">
        <rect>
         <x>500</x>
-        <y>520</y>
+        <y>530</y>
         <width>110</width>
         <height>35</height>
        </rect>
@@ -378,6 +418,46 @@ QPushButton:pressed {
        <string>Add</string>
       </property>
      </widget>
+     <widget class="QLabel" name="label_belanja_account">
+      <property name="geometry">
+       <rect>
+        <x>65</x>
+        <y>65</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>14</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Accounts</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_belanja_amount">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>65</y>
+        <width>58</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>14</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Amount</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="Hasil">
      <widget class="QPushButton" name="button_hasil_addAccount">
@@ -387,7 +467,7 @@ QPushButton:pressed {
       <property name="geometry">
        <rect>
         <x>500</x>
-        <y>520</y>
+        <y>530</y>
         <width>110</width>
         <height>35</height>
        </rect>
@@ -426,9 +506,9 @@ QPushButton:pressed {
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>75</y>
+        <y>90</y>
         <width>590</width>
-        <height>420</height>
+        <height>428</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -486,7 +566,7 @@ QScrollBar:horizontal {
          <x>0</x>
          <y>0</y>
          <width>590</width>
-         <height>420</height>
+         <height>428</height>
         </rect>
        </property>
        <property name="autoFillBackground">
@@ -517,6 +597,46 @@ QScrollBar:horizontal {
       </property>
       <property name="text">
        <string>Hasil</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_hasil_amount">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>65</y>
+        <width>58</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>14</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Amount</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_hasil_account">
+      <property name="geometry">
+       <rect>
+        <x>65</x>
+        <y>65</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>14</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Accounts</string>
       </property>
      </widget>
     </widget>
