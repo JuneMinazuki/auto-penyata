@@ -10,7 +10,7 @@ class PdfGenerator : public QObject
     Q_OBJECT
     
 public:
-    static void createApurPdf(const QMap<QString, QVariantMap> &data);
+    static void createAllPDF(const QMap<QString, QVariantMap> &data);
 
 private:
     // Data struct
@@ -56,8 +56,12 @@ private:
         bool hasBelanja;
     };
 
+    // Generate pdf
+    static int createApurPdf(const QMap<QString, QVariantMap> &data);
+
     // Setup Pdf
-    static std::unique_ptr<QPdfWriter> setupPDF(QString fileName);
+    static std::unique_ptr<QPdfWriter> setupPDF(const QString& fullFilePath);
+    static QString generateFilePath(QString fileName, QString companyName, QDate date);
 
     // Draw title and report name
     static int drawTitle(QPainter& painter, int yPos, QString companyName, QString reportName, int pageWidth);

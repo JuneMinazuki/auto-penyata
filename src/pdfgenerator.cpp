@@ -6,6 +6,9 @@
 #include <QDir>
 #include <QPainter>
 #include <QFont>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QRegularExpression>
 
 // Font
 QFont PdfGenerator::titleFont("Arial", 14, QFont::Bold);
@@ -30,10 +33,29 @@ const int PdfGenerator::xCol1 = xStartLeft + 1195; // Column 1 (Left)
 const int PdfGenerator::xCol2 = xStartLeft + 1495; // Column 2 (Middle)
 const int PdfGenerator::xCol3 = xStartLeft + 1795; // Column 3 (Right)
 
+// Main method to create the two PDF
+void PdfGenerator::createAllPDF(const QMap<QString, QVariantMap> &data) {
+    // APUR
+    double untungBersih = createApurPdf(data);
+}
+
 // Generate Apur as a PDF
-void PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
-    //Setup pdf
-    std::unique_ptr<QPdfWriter> writer = setupPDF("apur.pdf");
+int PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
+    // Get data from setting Json
+    QVariantMap settingData = data.value("setting.json");
+
+    QString companyName = settingData.value("CompanyName").toString();
+    QDate date = QDate::fromString(settingData["Date"].toString(), "yyyy/MM/dd");
+
+    QLocale malayLocale(QLocale::Malay, QLocale::Malaysia); // Get malay month
+    QString reportDate = malayLocale.toString(date, "d MMMM yyyy");
+    QString reportName = QString("Akaun Perdagangan bagi tempoh berakhir %1").arg(reportDate);
+
+    // Generate file name
+    QString fullFilePath = generateFilePath("APUR", companyName, date);
+
+    // Setup pdf
+    std::unique_ptr<QPdfWriter> writer = setupPDF(fullFilePath);
     QPainter painter(writer.get());
 
     // Define starting coordinates
@@ -47,16 +69,6 @@ void PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
     QPen pen = painter.pen(); 
     pen.setWidth(3);
     painter.setPen(pen);
-
-    // Get data from setting Json
-    QVariantMap settingData = data.value("setting.json");
-
-    QString companyName = settingData.value("CompanyName").toString();
-    QDate date = QDate::fromString(settingData["Date"].toString(), "yyyy/MM/dd");
-
-    QLocale malayLocale(QLocale::Malay, QLocale::Malaysia); // Get malay month
-    QString reportDate = malayLocale.toString(date, "d MMMM yyyy");
-    QString reportName = QString("Akaun Perdagangan bagi tempoh berakhir %1").arg(reportDate);
 
     // Draw title
     yPos = drawTitle(painter, yPos, companyName, reportName, pageWidth);
@@ -73,21 +85,17 @@ void PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
 
     // Finish drawing
     painter.end();
+
+    // Open the PDF file
+    if (!fullFilePath.isEmpty()) {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(fullFilePath));
+    }
+
+    return untungBersihData.untungBersih;
 }
 
 // Setup Pdf
-std::unique_ptr<QPdfWriter> PdfGenerator::setupPDF(QString fileName) {
-    // Get the path to the standard Downloads directory
-    QString downloadsPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-    
-    // If the downloads path can't be found, go to home directory
-    if (downloadsPath.isEmpty()) {
-        downloadsPath = QDir::homePath();
-    }
-    
-    // Construct full file path
-    QString fullFilePath = QDir::cleanPath(downloadsPath + QDir::separator() + fileName);
-
+std::unique_ptr<QPdfWriter> PdfGenerator::setupPDF(const QString& fullFilePath) {
     // Setup the PDF Writer
     std::unique_ptr<QPdfWriter> writer = std::make_unique<QPdfWriter>(fullFilePath);
     writer->setPageSize(QPageSize(QPageSize::A4));
@@ -434,4 +442,40 @@ int PdfGenerator::checkYPos(QPainter& painter, QPdfWriter* writer, int yPos){
     }
 
     return yPos;
+}
+
+// Generate file name
+QString PdfGenerator::generateFilePath(QString fileName, QString companyName, QDate date){
+    // Sanitize the company name to remove characters that are invalid in file paths.
+    QString safeCompanyName = companyName;
+    safeCompanyName.replace(QRegularExpression("[\\\\/:*?\"<>|]"), "_");
+
+    // Create a base name for the file. Using a consistent, sortable date format is best.
+    QString baseName = QString("%1 %2 %3").arg(safeCompanyName, fileName, date.toString("yyyy-MM-dd"));
+    const QString extension = ".pdf";
+
+    // Get the path to the standard Downloads directory
+    QString downloadsPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    
+    // If the downloads path can't be found, go to home directory
+    if (downloadsPath.isEmpty()) {
+        downloadsPath = QDir::homePath();
+    }
+
+    // Construct initial full file path
+    QString fullFilePath = QDir(downloadsPath).filePath(baseName + extension);
+
+    // Check for duplicate
+    QFileInfo fileInfo(fullFilePath);
+    int counter = 1;
+    while (fileInfo.exists()) {
+        QString newName = QString("%1 (%2)").arg(baseName).arg(counter);
+        fullFilePath = QDir(downloadsPath).filePath(newName + extension);
+        
+        // Update the QFileInfo object to check the new path in the next loop iteration.
+        fileInfo.setFile(fullFilePath); 
+        counter++;
+    }
+
+    return fullFilePath;
 }

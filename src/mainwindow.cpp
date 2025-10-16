@@ -159,5 +159,5 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
 void MainWindow::generatePDF(){
     // Read from Json
     QMap<QString, QVariantMap> jsonData = JsonManager::readAllJson();
-    PdfGenerator::createApurPdf(jsonData);
+    PdfGenerator::createAllPDF(jsonData);
 }
