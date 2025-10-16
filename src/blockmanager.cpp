@@ -61,9 +61,8 @@ void BlockManager::createAccountBlocks(const QVariantMap &variantMap, QStringLis
         }
     }
 
-    for (auto it = variantMap.constBegin(); it != variantMap.constEnd(); ++it) {
-        const QString& key = it.key();
-        const QVariant& value = it.value();
+    for (const QString &key : variantMap.keys()) {
+        const QVariant &value = variantMap[key];
 
         if (key == "_placeholder") {
             continue;
@@ -83,6 +82,74 @@ void BlockManager::createAccountBlocks(const QVariantMap &variantMap, QStringLis
                 qWarning() << "Key" << key << "has a non-numeric value or could not be converted, skipping.";
             }
         }
+    }
+
+    mainLayout->addStretch();
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setWidget(contentWidget);
+}
+
+// Creates visual blocks for aset bukan semasa
+void BlockManager::createAbsAccountBlocks(const QVariantMap &variantMap, Ui::MainWindow *m_ui, QScrollArea *scrollArea, QWidget *contentWidget)
+{
+    if (!scrollArea) {
+        qCritical() << "Error: QScrollArea not found in UI file.";
+        return;
+    }
+
+    // Clear the list of input fields and their initial values before creating new ones
+    m_AbsBlockInputs.clear(); 
+
+    // Check if the content widget exists and has a layout. If not, create a new layout
+    QVBoxLayout *mainLayout = qobject_cast<QVBoxLayout*>(contentWidget->layout());
+    if (!mainLayout) {
+        mainLayout = new QVBoxLayout(contentWidget);
+        mainLayout->setSpacing(10);
+        mainLayout->setAlignment(Qt::AlignTop);
+    } else {
+        // Clear existing widgets in the layout before adding new ones
+        QLayoutItem *item;
+        while ((item = mainLayout->takeAt(0)) != nullptr) {
+            if (item->widget()) {
+                item->widget()->deleteLater();
+            }
+            delete item;
+        }
+    }
+
+    for (const QString &key : variantMap.keys()) {
+        const QVariant &keyMap = variantMap[key];
+
+        if (key == "_placeholder") {
+            continue;
+        }
+
+        if (!keyMap.canConvert<QVariantMap>()) {
+            qWarning() << "Key" << key << "is not in the correct format, skipping.";
+            continue;
+        }
+
+        QVariantMap innerMap = keyMap.toMap();
+        if (!innerMap.contains("value") || !innerMap.contains("deprecatedValue")) {
+            qWarning() << "Key" << key << "is missing 'value' or 'deprecatedValue'.";
+            continue;
+        }
+
+        const QVariant &value = innerMap.value("value");
+        const QVariant &deprecatedValue = innerMap.value("deprecatedValue");
+
+        // Check if both value can be converted to double
+        if (!innerMap.contains("value") || !innerMap.contains("deprecatedValue")) {
+            qWarning() << "Key" << key << "has a non-numeric value or could not be converted, skipping.";
+            continue;
+        }
+
+        // Convert both value to 2 decimals place
+        QString formattedValue = QString::asprintf("%.02f", value.toDouble());
+        QString formattedDeprecatedValue = QString::asprintf("%.02f", deprecatedValue.toDouble());
+
+        QWidget *block = createAbsBlock(key, formattedValue, formattedDeprecatedValue); 
+        mainLayout->addWidget(block);
     }
 
     mainLayout->addStretch();
@@ -246,15 +313,129 @@ QWidget* BlockManager::createDeletableBlock(const QString &key, QString value)
     return blockFrame;
 }
 
+// Create block for aset bukan semasa
+QWidget* BlockManager::createAbsBlock(const QString &key, QString value, QString deprecatedValue)
+{
+    // Create a container widget for the block
+    QFrame *blockFrame = new QFrame;
+    blockFrame->setFrameShape(QFrame::StyledPanel);
+    blockFrame->setLineWidth(1);
+    blockFrame->setMidLineWidth(0);
+    blockFrame->setStyleSheet("QFrame { background-color: #262626; border: 1px solid #e6e6e6; border-radius: 3px; }");
+
+    // Horizontal layout for all elements
+    QHBoxLayout *blockLayout = new QHBoxLayout(blockFrame);
+
+    // Display account name on the left
+    QLineEdit *keyEdit = new QLineEdit;
+    keyEdit->setText(key);
+    keyEdit->setFont(QFont("Arial", 16, QFont::Bold));
+    keyEdit->setStyleSheet(
+        "QLineEdit { background-color: #181818; color: #E2E8F0; border: none; padding: 5px;"
+                    "min-width: 120px; border-radius: 2px; font-size: 16px; }"
+    );
+
+    // Display amount input on the right
+    QLineEdit *amountEdit = new QLineEdit;
+    amountEdit->setObjectName(key); // Use objectName to track the key
+    amountEdit->setText(value);
+    amountEdit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
+    // Display deprecated value input on the right
+    QLineEdit *deprecatedCostEdit = new QLineEdit;
+    deprecatedCostEdit->setText(deprecatedValue);
+    deprecatedCostEdit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
+    // Shared stylesheet and validator for value inputs
+    QString valueStyleSheet = "QLineEdit { background-color: #181818; color: #E2E8F0; border: none; padding: 5px;"
+                              "border-radius: 2px; font-size: 16px; }";
+    QRegularExpressionValidator *validator = new QRegularExpressionValidator(
+        QRegularExpression("^\\d*(\\.\\d{0,2})?$"), this
+    );
+
+    amountEdit->setStyleSheet(valueStyleSheet);
+    amountEdit->setValidator(validator);
+    amountEdit->setFixedWidth(120);
+
+    deprecatedCostEdit->setStyleSheet(valueStyleSheet);
+    deprecatedCostEdit->setValidator(validator);
+    deprecatedCostEdit->setFixedWidth(120);
+
+    // Reformat the text when the user is finished editing
+    connect(amountEdit, &QLineEdit::editingFinished, this, &BlockManager::reformatValueOnFinish);
+    connect(deprecatedCostEdit, &QLineEdit::editingFinished, this, &BlockManager::reformatValueOnFinish);
+
+    // Check for duplicate keys
+    connect(keyEdit, &QLineEdit::textChanged, this, [this, keyEdit, amountEdit]() {
+        QString oldKey = amountEdit->objectName();
+        QString newKey = keyEdit->text();
+
+        // Skip if key didn't change
+        if (oldKey == newKey) {
+            return;
+        }
+
+        if (m_activeKeys.contains(newKey)) {
+            qWarning() << "Key " << newKey << " already exists.";
+            keyEdit->setText(oldKey); // Revert to the old key
+        } else {
+            // Update the key in the tracking set
+            m_activeKeys.remove(oldKey);
+            m_activeKeys.insert(newKey);
+            
+            // Update the object name used for tracking
+            amountEdit->setObjectName(newKey);
+            
+            // Update the key in our main data map
+            QPair<QLineEdit*, QLineEdit*> widgets = m_AbsBlockInputs.take(oldKey);
+            m_AbsBlockInputs.insert(newKey, widgets);
+        }
+    });
+
+    // Store the pair of QLineEdit pointers in the map
+    m_AbsBlockInputs.insert(key, {amountEdit, deprecatedCostEdit});
+
+    // Delete button
+    QPushButton *deleteButton = new QPushButton("X", blockFrame);
+    deleteButton->setFixedSize(30, 30);
+    deleteButton->setFont(QFont("Arial", 14, QFont::Bold));
+    deleteButton->setStyleSheet("QPushButton { background-color: #550404; color: #e6e6e6; border: 1px solid #cccccc; border-radius: 5px; }"
+                                "QPushButton:hover { background-color: #990505; }"
+                                "QPushButton:pressed { background-color: #4c0808; }");
+    
+    // Delete the block
+    connect(deleteButton, &QPushButton::clicked, this, [this, blockFrame, amountEdit]() {
+        QString keyToRemove = amountEdit->objectName();
+        
+        // Remove from the data map
+        m_AbsBlockInputs.remove(keyToRemove);
+        m_activeKeys.remove(keyToRemove);
+
+        // Delete the entire block widget
+        blockFrame->deleteLater();
+
+        qDebug() << "Removed block for key:" << keyToRemove;
+    });
+
+    // Add widgets to the layout in the desired order
+    blockLayout->addWidget(keyEdit, 1);             // Key (stretches)
+    blockLayout->addWidget(deleteButton, 0);        // Delete button
+    blockLayout->addWidget(amountEdit, 0);          // Amount input
+    blockLayout->addWidget(deprecatedCostEdit, 0);  // Deprecated cost input
+
+    blockFrame->setMinimumHeight(60);
+    blockFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    return blockFrame;
+}
+
 // Returns a map of account and it's current value
 QVariantMap BlockManager::getAllValueMap() const
 {
     QVariantMap allValuesMap;
 
-    for (auto it = m_accountValueInputs.constBegin(); it != m_accountValueInputs.constEnd(); ++it)
+    for (const QLineEdit *lineEdit : m_accountValueInputs.keys())
     {
-        QLineEdit *lineEdit = it.key();
-
         // Ensure the QLineEdit has a unique objectName set
         QString keyName = lineEdit->objectName();
         if (keyName.isEmpty()) {
@@ -264,6 +445,30 @@ QVariantMap BlockManager::getAllValueMap() const
 
         // Insert the current text of the QLineEdit into the result map.
         allValuesMap.insert(keyName, lineEdit->text());
+    }
+
+    return allValuesMap;
+}
+
+// Returns a map of account for aset bukan semasa
+QVariantMap BlockManager::getAbsValueMap() const
+{
+    QVariantMap allValuesMap;
+
+    for (const QString &keyName : m_AbsBlockInputs.keys())
+    {
+        // Retrieve the pair of QLineEdit widgets for the current asset
+        const QPair<QLineEdit*, QLineEdit*> &widgetPair = m_AbsBlockInputs.value(keyName);
+        const QLineEdit *valueEdit = widgetPair.first;
+        const QLineEdit *deprecatedValueEdit = widgetPair.second;
+
+        // Create a nested map to store the value and deprecated value
+        QVariantMap valueMap;
+        valueMap.insert("value", valueEdit->text().toDouble());
+        valueMap.insert("deprecatedValue", deprecatedValueEdit->text().toDouble());
+
+        // Add the nested map to the main map using the asset name as the key
+        allValuesMap.insert(keyName, valueMap);
     }
 
     return allValuesMap;

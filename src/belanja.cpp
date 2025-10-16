@@ -12,7 +12,7 @@ Belanja::Belanja(Ui::MainWindow *m_ui, QObject *parent)
     contentWidget = ui->belanja_scrollAreaWidgetContents;
 
     // Button
-    connect(addButton, &QPushButton::clicked, this, &Belanja::handleAddButtonClick); // Reset button
+    connect(addButton, &QPushButton::clicked, this, &Belanja::handleAddButtonClick); // Add button
 }
 
 // When Belanja page is open

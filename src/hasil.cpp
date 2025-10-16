@@ -12,7 +12,7 @@ Hasil::Hasil(Ui::MainWindow *m_ui, QObject *parent)
     contentWidget = ui->hasil_scrollAreaWidgetContents;
 
     // Button
-    connect(addButton, &QPushButton::clicked, this, &Hasil::handleAddButtonClick); // Reset button
+    connect(addButton, &QPushButton::clicked, this, &Hasil::handleAddButtonClick); // Add button
 }
 
 // When Hasil page is open

@@ -5,6 +5,7 @@
 #include "apur.h"
 #include "belanja.h"
 #include "hasil.h"
+#include "asetbukansemasa.h"
 #include "pagemanager.h"
 #include "pdfgenerator.h"
 
@@ -39,6 +40,7 @@ private:
     Apur *m_apurPage; 
     Belanja *m_belanjaPage;
     Hasil *m_hasilPage;
+    AsetBukanSemasa *m_absPage;
     Setting *m_settingPage;
 
     //VARIABLE

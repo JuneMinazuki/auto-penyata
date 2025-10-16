@@ -38,6 +38,8 @@ set(PROJECT_SOURCES
     src/pdfgenerator.h
     src/hasil.cpp
     src/hasil.h
+    src/asetbukansemasa.cpp
+    src/asetbukansemasa.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
