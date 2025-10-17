@@ -8,7 +8,7 @@ class Hasil : public PageManager
     Q_OBJECT
     
 public:
-    explicit Hasil(Ui::MainWindow *m_ui, QObject *parent = nullptr); 
+    explicit Hasil(Ui::MainWindow *m_ui, QObject *parent = nullptr,  StatusBar* statusBar = nullptr);
 
     // When Hasil page is open
     void handlePageActivation() override;

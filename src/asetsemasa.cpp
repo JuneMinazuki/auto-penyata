@@ -2,7 +2,7 @@
 #include "blockmanager.h"
 #include "jsonmanager.h"
 
-AsetSemasa::AsetSemasa(Ui::MainWindow *m_ui, QObject *parent) 
+AsetSemasa::AsetSemasa(Ui::MainWindow *m_ui, QObject *parent, StatusBar* statusBar) 
     : PageManager(m_ui, parent, std::make_unique<BlockManager>(nullptr))
 {
     // Page initailsation
@@ -10,6 +10,7 @@ AsetSemasa::AsetSemasa(Ui::MainWindow *m_ui, QObject *parent)
     addButton = ui->button_as_addAccount;
     scrollArea = ui->scrollable_as;
     contentWidget = ui->as_scrollAreaWidgetContents;
+    m_statusBar = statusBar;
 
     // Desired display order of keys
     desiredOrder = {

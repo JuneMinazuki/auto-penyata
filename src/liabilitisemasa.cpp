@@ -2,7 +2,7 @@
 #include "blockmanager.h"
 #include "jsonmanager.h"
 
-LiabilitiSemasa::LiabilitiSemasa(Ui::MainWindow *m_ui, QObject *parent) 
+LiabilitiSemasa::LiabilitiSemasa(Ui::MainWindow *m_ui, QObject *parent, StatusBar* statusBar) 
     : PageManager(m_ui, parent, std::make_unique<BlockManager>(nullptr))
 {
     // Page initailsation
@@ -10,6 +10,7 @@ LiabilitiSemasa::LiabilitiSemasa(Ui::MainWindow *m_ui, QObject *parent)
     addButton = ui->button_ls_addAccount;
     scrollArea = ui->scrollable_ls;
     contentWidget = ui->ls_scrollAreaWidgetContents;
+    m_statusBar = statusBar;
 
     // Desired display order of keys
     desiredOrder = {

@@ -2,7 +2,7 @@
 #include "blockmanager.h"
 #include "jsonmanager.h"
 
-Hasil::Hasil(Ui::MainWindow *m_ui, QObject *parent) 
+Hasil::Hasil(Ui::MainWindow *m_ui, QObject *parent, StatusBar* statusBar)
     : PageManager(m_ui, parent, std::make_unique<BlockManager>(nullptr))
 {
     // Page initailsation
@@ -10,6 +10,7 @@ Hasil::Hasil(Ui::MainWindow *m_ui, QObject *parent)
     addButton = ui->button_hasil_addAccount;
     scrollArea = ui->scrollable_hasil;
     contentWidget = ui->hasil_scrollAreaWidgetContents;
+    m_statusBar = statusBar;
 
     // Button
     connect(addButton, &QPushButton::clicked, this, &Hasil::handleAddButtonClick); // Add button

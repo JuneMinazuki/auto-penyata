@@ -8,7 +8,7 @@ class AsetBukanSemasa : public PageManager
     Q_OBJECT
     
 public:
-    explicit AsetBukanSemasa(Ui::MainWindow *m_ui, QObject *parent = nullptr); 
+    explicit AsetBukanSemasa(Ui::MainWindow *m_ui, QObject *parent = nullptr,  StatusBar* statusBar = nullptr); 
 
     // When Aset Bukan Semasa page is open
     void handlePageActivation() override;

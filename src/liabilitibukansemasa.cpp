@@ -2,7 +2,7 @@
 #include "blockmanager.h"
 #include "jsonmanager.h"
 
-LiabilitiBukanSemasa::LiabilitiBukanSemasa(Ui::MainWindow *m_ui, QObject *parent) 
+LiabilitiBukanSemasa::LiabilitiBukanSemasa(Ui::MainWindow *m_ui, QObject *parent, StatusBar* statusBar)
     : PageManager(m_ui, parent, std::make_unique<BlockManager>(nullptr))
 {
     // Page initailsation
@@ -10,6 +10,7 @@ LiabilitiBukanSemasa::LiabilitiBukanSemasa(Ui::MainWindow *m_ui, QObject *parent
     addButton = ui->button_lbs_addAccount;
     scrollArea = ui->scrollable_lbs;
     contentWidget = ui->lbs_scrollAreaWidgetContents;
+    m_statusBar = statusBar;
 
     // Button
     connect(addButton, &QPushButton::clicked, this, &LiabilitiBukanSemasa::handleAddButtonClick); // Add button

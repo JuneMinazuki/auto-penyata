@@ -48,6 +48,8 @@ set(PROJECT_SOURCES
     src/liabilitisemasa.h
     src/ekuitipemilik.cpp
     src/ekuitipemilik.h
+    src/statusbar.cpp
+    src/statusbar.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -2,13 +2,14 @@
 #include "blockmanager.h"
 #include "jsonmanager.h"
 
-Apur::Apur(Ui::MainWindow *m_ui, QObject *parent) 
+Apur::Apur(Ui::MainWindow *m_ui, QObject *parent, StatusBar* statusBar) 
     : PageManager(m_ui, parent, std::make_unique<BlockManager>(nullptr))
 {
     // Page initailsation
     fileName = "apur.json";
     scrollArea = ui->scrollable_apur;
     contentWidget = ui->apur_scrollAreaWidgetContents;
+    m_statusBar = statusBar;
 
     // Desired display order of keys
     desiredOrder = {

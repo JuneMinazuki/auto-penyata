@@ -24,15 +24,19 @@ MainWindow::MainWindow(QWidget *parent)
         {"🖨️ Export PDF", 9}
     };
 
+    // Update status bar
+    m_statusBar = new StatusBar(ui, this);
+    m_statusBar->createStatusBar();
+
     // Setup for each pages
-    m_apurPage = new Apur(ui, this);
-    m_belanjaPage = new Belanja(ui, this);
-    m_hasilPage = new Hasil(ui, this);
-    m_absPage = new AsetBukanSemasa(ui, this);
-    m_asPage = new AsetSemasa(ui, this);
-    m_lbsPage = new LiabilitiBukanSemasa(ui, this);
-    m_lsPage = new LiabilitiSemasa(ui, this);
-    m_epPage = new EkuitiPemilik(ui, this);
+    m_apurPage = new Apur(ui, this, m_statusBar);
+    m_belanjaPage = new Belanja(ui, this, m_statusBar);
+    m_hasilPage = new Hasil(ui, this, m_statusBar);
+    m_absPage = new AsetBukanSemasa(ui, this, m_statusBar);
+    m_asPage = new AsetSemasa(ui, this, m_statusBar);
+    m_lbsPage = new LiabilitiBukanSemasa(ui, this, m_statusBar);
+    m_lsPage = new LiabilitiSemasa(ui, this, m_statusBar);
+    m_epPage = new EkuitiPemilik(ui, this, m_statusBar);
     m_settingPage = new Setting(ui, this);
 
     // Default page

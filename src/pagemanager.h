@@ -2,6 +2,7 @@
 #define PAGEMANAGER_H 
 
 #include "./ui_mainwindow.h"
+#include "statusbar.h"
 
 #include <memory>
 
@@ -32,6 +33,9 @@ protected:
     QPushButton* addButton; // Add account buttons
     QScrollArea* scrollArea; // Scrollable area
     QWidget *contentWidget; // Area to put all account block
+
+    // Status bar
+    StatusBar* m_statusBar;
 
     // Desired order of blocks
     QStringList desiredOrder;

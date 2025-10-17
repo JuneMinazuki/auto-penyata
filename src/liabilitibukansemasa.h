@@ -8,7 +8,7 @@ class LiabilitiBukanSemasa : public PageManager
     Q_OBJECT
     
 public:
-    explicit LiabilitiBukanSemasa(Ui::MainWindow *m_ui, QObject *parent = nullptr); 
+    explicit LiabilitiBukanSemasa(Ui::MainWindow *m_ui, QObject *parent = nullptr,  StatusBar* statusBar = nullptr); 
 
     // When Liabiliti Bukan Semasa page is open
     void handlePageActivation() override;

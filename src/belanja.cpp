@@ -2,7 +2,7 @@
 #include "blockmanager.h"
 #include "jsonmanager.h"
 
-Belanja::Belanja(Ui::MainWindow *m_ui, QObject *parent) 
+Belanja::Belanja(Ui::MainWindow *m_ui, QObject *parent, StatusBar* statusBar)
     : PageManager(m_ui, parent, std::make_unique<BlockManager>(nullptr))
 {
     // Page initailsation
@@ -10,6 +10,7 @@ Belanja::Belanja(Ui::MainWindow *m_ui, QObject *parent)
     addButton = ui->button_belanja_addAccount;
     scrollArea = ui->scrollable_belanja;
     contentWidget = ui->belanja_scrollAreaWidgetContents;
+    m_statusBar = statusBar;
 
     // Button
     connect(addButton, &QPushButton::clicked, this, &Belanja::handleAddButtonClick); // Add button

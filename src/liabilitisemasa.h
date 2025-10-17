@@ -8,7 +8,7 @@ class LiabilitiSemasa : public PageManager
     Q_OBJECT
     
 public:
-    explicit LiabilitiSemasa(Ui::MainWindow *m_ui, QObject *parent = nullptr); 
+    explicit LiabilitiSemasa(Ui::MainWindow *m_ui, QObject *parent = nullptr,  StatusBar* statusBar = nullptr); 
 
     // When Liabiliti Semasa page is open
     void handlePageActivation() override;

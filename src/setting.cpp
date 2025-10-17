@@ -45,24 +45,24 @@ void Setting::handlePageDeactivation()
 // Load from JSON
 void Setting::loadJson()
 {
-    QVariantMap settings = JsonManager::readJson("setting.json");
+    jsonData= JsonManager::readJson("setting.json");
 
-    if (settings.isEmpty()) {
+    if (jsonData.isEmpty()) {
         qWarning() << "setting.json is empty. Cannot load value";
         return;
     }
 
     // Find "CompanyName"
-    if (settings.contains("CompanyName")) {
-        initialCompanyName = settings["CompanyName"].toString();
+    if (jsonData.contains("CompanyName")) {
+        initialCompanyName = jsonData["CompanyName"].toString();
     } else {
         qWarning() << "Key 'CompanyName' not found in setting.json.";
         initialCompanyName = ""; 
     }
 
     // Find "Date"
-    if (settings.contains("Date")) {
-        QString dateString = settings["Date"].toString();
+    if (jsonData.contains("Date")) {
+        QString dateString = jsonData["Date"].toString();
         QDate date = QDate::fromString(dateString, "yyyy/MM/dd");
 
         // Check if the conversion was successful

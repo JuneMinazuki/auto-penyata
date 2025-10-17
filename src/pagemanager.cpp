@@ -29,6 +29,9 @@ void PageManager::handlePageDeactivation()
 
     if (success) {
         qDebug() << "Data saved successfully to" << fileName;
+        
+        // Update status bar
+        m_statusBar->updateStatusBar(fileName, newData, jsonData);
     } else {
         qDebug() << "Failed to save data to" << fileName;
     }

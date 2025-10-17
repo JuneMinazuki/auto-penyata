@@ -2,7 +2,7 @@
 #include "blockmanager.h"
 #include "jsonmanager.h"
 
-AsetBukanSemasa::AsetBukanSemasa(Ui::MainWindow *m_ui, QObject *parent) 
+AsetBukanSemasa::AsetBukanSemasa(Ui::MainWindow *m_ui, QObject *parent, StatusBar* statusBar)
     : PageManager(m_ui, parent, std::make_unique<BlockManager>(nullptr))
 {
     // Page initailsation
@@ -10,6 +10,7 @@ AsetBukanSemasa::AsetBukanSemasa(Ui::MainWindow *m_ui, QObject *parent)
     addButton = ui->button_abs_addAccount;
     scrollArea = ui->scrollable_abs;
     contentWidget = ui->abs_scrollAreaWidgetContents;
+    m_statusBar = statusBar;
 
     // Button
     connect(addButton, &QPushButton::clicked, this, &AsetBukanSemasa::handleAddButtonClick); // Add button

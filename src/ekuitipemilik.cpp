@@ -2,13 +2,14 @@
 #include "blockmanager.h"
 #include "jsonmanager.h"
 
-EkuitiPemilik::EkuitiPemilik(Ui::MainWindow *m_ui, QObject *parent) 
+EkuitiPemilik::EkuitiPemilik(Ui::MainWindow *m_ui, QObject *parent, StatusBar* statusBar)
     : PageManager(m_ui, parent, std::make_unique<BlockManager>(nullptr))
 {
     // Page initailsation
     fileName = "ekuiti_pemilik.json";
     scrollArea = ui->scrollable_ep;
     contentWidget = ui->ep_scrollAreaWidgetContents;
+    m_statusBar = statusBar;
 
     // Desired display order of keys
     desiredOrder = {

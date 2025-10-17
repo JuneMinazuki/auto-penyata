@@ -8,7 +8,7 @@ class Belanja : public PageManager
     Q_OBJECT
     
 public:
-    explicit Belanja(Ui::MainWindow *m_ui, QObject *parent = nullptr); 
+    explicit Belanja(Ui::MainWindow *m_ui, QObject *parent = nullptr,  StatusBar* statusBar = nullptr); 
 
     // When Belanja page is open
     void handlePageActivation() override;

@@ -12,6 +12,7 @@
 #include "ekuitipemilik.h"
 #include "pagemanager.h"
 #include "pdfgenerator.h"
+#include "statusbar.h"
 
 #include <QApplication>
 #include <QMainWindow>
@@ -50,6 +51,9 @@ private:
     LiabilitiSemasa *m_lsPage;
     EkuitiPemilik *m_epPage;
     Setting *m_settingPage;
+
+    // Status bar
+    StatusBar *m_statusBar;
 
     //VARIABLE
     QHash<QString, int> m_pageIndexMap; // Index of each page
