@@ -34,5 +34,8 @@ private:
     void updateAsValue(const QVariantMap asData, bool reverse = false);
     void updateCustomValue(const QVariantMap data, double& amount, bool reverse = false);
     void updateEpValue(const QVariantMap epData, bool reverse = false);
+
+    // Update status label
+    void updateStatusLabel();
 };
 #endif // STATUSBAR_H

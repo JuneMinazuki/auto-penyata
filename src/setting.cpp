@@ -1,9 +1,12 @@
 #include "setting.h"
 #include "jsonmanager.h"
+#include "statusbar.h"
 
-Setting::Setting(Ui::MainWindow *m_ui, QObject *parent) 
+Setting::Setting(Ui::MainWindow *m_ui, QObject *parent, StatusBar* statusBar)
     : PageManager(m_ui, parent)
 {
+    m_statusBar = statusBar;
+
     // Button
     connect(ui->button_reset, &QPushButton::clicked, this, &Setting::handleResetButtonClick); // Reset button
     connect(ui->button_setToday, &QPushButton::clicked, this, &Setting::handleSetTodayButtonClick); // setToday button
@@ -99,6 +102,8 @@ void Setting::handleResetButtonClick()
 
     ui->label_reset_status->setVisible(true);
     loadJson();
+
+    m_statusBar->createStatusBar();
 }
 
 // When user press setToday button

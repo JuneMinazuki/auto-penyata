@@ -68,12 +68,18 @@ void StatusBar::updateStatusBar(QString page, QVariantMap newData, QVariantMap o
                 break;
         }
 
+        // Update status label
+        updateStatusLabel();
     }
 }
 
 // First time update status bar
 void StatusBar::createStatusBar()
 {
+    // Amount 
+    debitAmount = 0;
+    creditAmount = 0;
+
     // Read from all Json
     QMap<QString, QVariantMap> jsonData = JsonManager::readAllJson();
 
@@ -109,6 +115,29 @@ void StatusBar::createStatusBar()
 
     // Ekuiti Pemilik
     updateEpValue(epData);
+
+    // Update status label
+    updateStatusLabel();
+}
+
+// Update status label
+void StatusBar::updateStatusLabel()
+{
+    QString debitString = QString::asprintf("%.02f", debitAmount);
+    QString creditString = QString::asprintf("%.02f", creditAmount);
+
+    QString displayText = QString("Debit: RM%1 | Credit: RM%2").arg(debitString).arg(creditString);
+    amountLabel->setText(displayText);
+
+    // Change bar colour
+    const double epsilon = 0.001; // Avoid precision issues
+
+    if (qAbs(debitAmount - creditAmount) < epsilon)
+    {
+        statusBar->setStyleSheet("background-color: #1a4d19;");
+    } else {
+        statusBar->setStyleSheet("background-color: #471414;");
+    }
 }
 
 // Update Apur value

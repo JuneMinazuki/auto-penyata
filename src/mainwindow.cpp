@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_lbsPage = new LiabilitiBukanSemasa(ui, this, m_statusBar);
     m_lsPage = new LiabilitiSemasa(ui, this, m_statusBar);
     m_epPage = new EkuitiPemilik(ui, this, m_statusBar);
-    m_settingPage = new Setting(ui, this);
+    m_settingPage = new Setting(ui, this, m_statusBar);
 
     // Default page
     ui->MainScreen->setCurrentIndex(0); 

@@ -8,7 +8,7 @@ class Setting : public PageManager
     Q_OBJECT
     
 public:
-    explicit Setting(Ui::MainWindow *m_ui, QObject *parent = nullptr); 
+    explicit Setting(Ui::MainWindow *m_ui, QObject *parent = nullptr, StatusBar* statusBar = nullptr); 
 
     // When setting page is open
     void handlePageActivation();
