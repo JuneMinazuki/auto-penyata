@@ -23,7 +23,7 @@ void StatusBar::updateStatusBar(QString page, QVariantMap newData, QVariantMap o
 // First time update status bar
 void StatusBar::createStatusBar()
 {
-        // Read from all Json
+    // Read from all Json
     QMap<QString, QVariantMap> jsonData = JsonManager::readAllJson();
 
     QVariantMap apurData = jsonData.value("apur.json");
@@ -36,80 +36,153 @@ void StatusBar::createStatusBar()
     QVariantMap epData = jsonData.value("ekuiti_pemilik.json");
 
     // Apur
-    creditAmount += apurData["Jualan"].toDouble();
-    debitAmount += apurData["Pulangan Jualan"].toDouble();
-    debitAmount += apurData["Belian"].toDouble();
-    creditAmount += apurData["Pulangan Belian"].toDouble();
-    debitAmount += apurData["Angkutan Masuk"].toDouble();
-    debitAmount += apurData["Duti Import"].toDouble();
-    debitAmount += apurData["Insurans Atas Belian"].toDouble();
-    debitAmount += apurData["Upah Atas Belian"].toDouble();
-    debitAmount += apurData["Inventori Awal"].toDouble();
+    updateApurValue(apurData);
 
     // Aset bukan semasa
-    for (const QString &key : absData.keys()) {
-        if (key == "_placeholder"){
-            continue;
-        }
-
-        const QVariant &keyMap = absData[key];
-        QVariantMap innerMap = keyMap.toMap();
-
-        debitAmount += innerMap.value("value").toDouble();
-        creditAmount += innerMap.value("deprecatedValue").toDouble();
-    }
+    updateAbsValue(absData);
 
     // Aset semasa
-    for (const QString &key : asData.keys()) {
-        if (key == "_placeholder"){
-            continue;
-        }
-
-        if (key == "Peruntukan Hutang Ragu"){
-            creditAmount += asData[key].toDouble();
-        }
-        else {
-            debitAmount += asData[key].toDouble();
-        }
-    }
+    updateAsValue(asData);
 
     // Liabiliti bukan semasa
-    for (const QString &key : lbsData.keys()) {
-        if (key == "_placeholder"){
-            continue;
-        }
-
-        creditAmount += lbsData[key].toDouble();
-    }
+    updateCustomValue(lbsData, creditAmount);
 
     // Liabiliti semasa
-    for (const QString &key : lsData.keys()) {
-        if (key == "_placeholder"){
-            continue;
-        }
-
-        creditAmount += lsData[key].toDouble();
-    }
+    updateCustomValue(lsData, creditAmount);
 
     // Belanja
-    for (const QString &key : belanjaData.keys()) {
-        if (key == "_placeholder"){
-            continue;
-        }
-
-        debitAmount += belanjaData[key].toDouble();
-    }
+    updateCustomValue(belanjaData, debitAmount);
 
     // Hasil
-    for (const QString &key : hasilData.keys()) {
-        if (key == "_placeholder"){
-            continue;
-        }
-
-        creditAmount += hasilData[key].toDouble();
-    }
+    updateCustomValue(hasilData, creditAmount);
 
     // Ekuiti Pemilik
-    creditAmount += apurData["Modal Awal"].toDouble();
-    debitAmount += apurData["Ambilan"].toDouble();
+    updateEpValue(epData);
+}
+
+// Update Apur value
+void StatusBar::updateApurValue(const QVariantMap apurData, bool reverse)
+{
+    if (!reverse){
+        creditAmount += apurData["Jualan"].toDouble();
+        debitAmount += apurData["Pulangan Jualan"].toDouble();
+        debitAmount += apurData["Belian"].toDouble();
+        creditAmount += apurData["Pulangan Belian"].toDouble();
+        debitAmount += apurData["Angkutan Masuk"].toDouble();
+        debitAmount += apurData["Duti Import"].toDouble();
+        debitAmount += apurData["Insurans Atas Belian"].toDouble();
+        debitAmount += apurData["Upah Atas Belian"].toDouble();
+        debitAmount += apurData["Inventori Awal"].toDouble();
+    }
+    else {
+        creditAmount -= apurData["Jualan"].toDouble();
+        debitAmount -= apurData["Pulangan Jualan"].toDouble();
+        debitAmount -= apurData["Belian"].toDouble();
+        creditAmount -= apurData["Pulangan Belian"].toDouble();
+        debitAmount -= apurData["Angkutan Masuk"].toDouble();
+        debitAmount -= apurData["Duti Import"].toDouble();
+        debitAmount -= apurData["Insurans Atas Belian"].toDouble();
+        debitAmount -= apurData["Upah Atas Belian"].toDouble();
+        debitAmount -= apurData["Inventori Awal"].toDouble();
+    }
+}
+
+// Update Aset Bukan Semasa value
+void StatusBar::updateAbsValue(const QVariantMap absData, bool reverse)
+{
+    if (!reverse){
+        for (const QString &key : absData.keys()) {
+            if (key == "_placeholder"){
+                continue;
+            }
+
+            const QVariant &keyMap = absData[key];
+            QVariantMap innerMap = keyMap.toMap();
+
+            debitAmount += innerMap.value("value").toDouble();
+            creditAmount += innerMap.value("deprecatedValue").toDouble();
+        }
+    }
+    else {
+        for (const QString &key : absData.keys()) {
+            if (key == "_placeholder"){
+                continue;
+            }
+
+            const QVariant &keyMap = absData[key];
+            QVariantMap innerMap = keyMap.toMap();
+
+            debitAmount -= innerMap.value("value").toDouble();
+            creditAmount -= innerMap.value("deprecatedValue").toDouble();
+        }
+    }
+}
+
+// Update Aset Semasa value
+void StatusBar::updateAsValue(const QVariantMap asData, bool reverse)
+{
+    if (!reverse){
+        for (const QString &key : asData.keys()) {
+            if (key == "_placeholder"){
+                continue;
+            }
+
+            if (key == "Peruntukan Hutang Ragu"){
+                creditAmount += asData[key].toDouble();
+            }
+            else {
+                debitAmount += asData[key].toDouble();
+            }
+        }
+    }
+    else {
+        for (const QString &key : asData.keys()) {
+            if (key == "_placeholder"){
+                continue;
+            }
+
+            if (key == "Peruntukan Hutang Ragu"){
+                creditAmount -= asData[key].toDouble();
+            }
+            else {
+                debitAmount -= asData[key].toDouble();
+            }
+        }
+    }
+}
+
+// Update other page value
+void StatusBar::updateCustomValue(const QVariantMap data, double& amount, bool reverse)
+{
+    if (!reverse){
+        for (const QString &key : data.keys()) {
+            if (key == "_placeholder"){
+                continue;
+            }
+
+            amount += data[key].toDouble();
+        }
+    }
+    else {
+        for (const QString &key : data.keys()) {
+            if (key == "_placeholder"){
+                continue;
+            }
+
+            amount -= data[key].toDouble();
+        }
+    }
+}
+
+// Update Ekuiti Pemilik value
+void StatusBar::updateEpValue(const QVariantMap epData, bool reverse)
+{
+    if (!reverse){
+        creditAmount += epData["Modal Awal"].toDouble();
+        debitAmount += epData["Ambilan"].toDouble();
+    }
+    else {
+        creditAmount -= epData["Modal Awal"].toDouble();
+        debitAmount -= epData["Ambilan"].toDouble();
+    }
 }

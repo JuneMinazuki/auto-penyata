@@ -24,5 +24,15 @@ private:
     // Status bar initailsation
     QWidget* statusBar; // Status bar
     QLabel* amountLabel; // Label showing amount
+
+    // Index of each page
+    QHash<QString, int> m_pageIndexMap;
+
+    // Update data in each page
+    void updateApurValue(const QVariantMap apurData, bool reverse = false);
+    void updateAbsValue(const QVariantMap absData, bool reverse = false);
+    void updateAsValue(const QVariantMap asData, bool reverse = false);
+    void updateCustomValue(const QVariantMap data, double& amount, bool reverse = false);
+    void updateEpValue(const QVariantMap epData, bool reverse = false);
 };
 #endif // STATUSBAR_H
