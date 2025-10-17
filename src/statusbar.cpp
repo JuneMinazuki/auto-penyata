@@ -12,12 +12,63 @@ StatusBar::StatusBar(Ui::MainWindow *ui, QObject *parent)
     // Status bar initailsation
     statusBar = ui->statusBar;
     amountLabel = ui->amount_label;
+
+    // Hash of each page
+    m_pageIndexMap = {
+        {"apur.json", 0},
+        {"aset_bukan_semasa.json", 1},
+        {"aset_semasa.json", 2},
+        {"liabiliti_bukan_semasa.json", 3},
+        {"liabiliti_semasa.json", 4},
+        {"belanja.json", 5},
+        {"hasil.json", 6},
+        {"ekuiti_pemilik.json", 7},
+    };
 }
 
 // Update status bar
 void StatusBar::updateStatusBar(QString page, QVariantMap newData, QVariantMap oldData)
 {
+    if (m_pageIndexMap.contains(page)) {
+        int index = m_pageIndexMap.value(page);
 
+        // Remove old data and add new data
+        switch (index) {
+            case 0: // APUR
+                updateApurValue(oldData, true);
+                updateApurValue(newData);
+                break;
+            case 1: // Aset bukan semsa
+                updateAbsValue(oldData, true);
+                updateAbsValue(newData);
+                break;
+            case 2: // Aset semasa
+                updateAsValue(oldData, true);
+                updateAsValue(newData);
+                break;
+            case 3: // Liabiliti bukan semasa
+                updateCustomValue(oldData, creditAmount, true);
+                updateCustomValue(newData, creditAmount);
+                break;
+            case 4: // Liabiliti semasa
+                updateCustomValue(oldData, creditAmount, true);
+                updateCustomValue(newData, creditAmount);
+                break;
+            case 5: // Belanja
+                updateCustomValue(oldData, debitAmount, true);
+                updateCustomValue(newData, debitAmount);
+                break;
+            case 6: // Hasil
+                updateCustomValue(oldData, creditAmount, true);
+                updateCustomValue(newData, creditAmount);
+                break;
+            case 7: // Ekuiti pemilik
+                updateEpValue(oldData, true);
+                updateEpValue(newData);
+                break;
+        }
+
+    }
 }
 
 // First time update status bar
