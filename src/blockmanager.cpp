@@ -253,7 +253,7 @@ QWidget* BlockManager::createDeletableBlock(const QString &key, QString value)
     connect(valueEdit, &QLineEdit::editingFinished, this, &BlockManager::reformatValueOnFinish);
 
     // Check for duplicate keys
-    connect(keyEdit, &QLineEdit::textChanged, this, [this, keyEdit, valueEdit]() {
+    connect(keyEdit, &QLineEdit::editingFinished, this, [this, keyEdit, valueEdit]() {
         QString oldKey = valueEdit->objectName();
         QString newKey = keyEdit->text();
 

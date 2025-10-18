@@ -57,7 +57,8 @@ private:
     };
 
     // Generate pdf
-    static int createApurPdf(const QMap<QString, QVariantMap> &data);
+    static double createApurPdf(const QMap<QString, QVariantMap> &data);
+    static void createPkkPdf(const QMap<QString, QVariantMap> &data, const double untungBersih);
 
     // Setup Pdf
     static std::unique_ptr<QPdfWriter> setupPDF(const QString& fullFilePath);

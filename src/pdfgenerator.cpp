@@ -35,12 +35,12 @@ const int PdfGenerator::xCol3 = xStartLeft + 1795; // Column 3 (Right)
 
 // Main method to create the two PDF
 void PdfGenerator::createAllPDF(const QMap<QString, QVariantMap> &data) {
-    // APUR
-    double untungBersih = createApurPdf(data);
+    double untungBersih = createApurPdf(data); // APUR
+    createPkkPdf(data, untungBersih); // PKK
 }
 
 // Generate Apur as a PDF
-int PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
+double PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
     // Get data from setting Json
     QVariantMap settingData = data.value("setting.json");
 
@@ -92,6 +92,49 @@ int PdfGenerator::createApurPdf(const QMap<QString, QVariantMap> &data) {
     }
 
     return untungBersihData.untungBersih;
+}
+
+// Generate Pkk as a PDF
+void PdfGenerator::createPkkPdf(const QMap<QString, QVariantMap> &data, const double untungBersih){
+    // Get data from setting Json
+    QVariantMap settingData = data.value("setting.json");
+
+    QString companyName = settingData.value("CompanyName").toString();
+    QDate date = QDate::fromString(settingData["Date"].toString(), "yyyy/MM/dd");
+
+    QLocale malayLocale(QLocale::Malay, QLocale::Malaysia); // Get malay month
+    QString reportDate = malayLocale.toString(date, "d MMMM yyyy");
+    QString reportName = QString("Penyata Kedudukan Kewangan pada %1").arg(reportDate);
+
+    // Generate file name
+    QString fullFilePath = generateFilePath("PKK", companyName, date);
+
+    // Setup pdf
+    std::unique_ptr<QPdfWriter> writer = setupPDF(fullFilePath);
+    QPainter painter(writer.get());
+
+    // Define starting coordinates
+    int yPos = margin;
+
+    // Get page width and height
+    const int pageWidth = writer->width() - (2 * margin); 
+    const int pageHeight = writer->height() - margin;
+
+    // Set line width
+    QPen pen = painter.pen(); 
+    pen.setWidth(3);
+    painter.setPen(pen);
+
+    // Draw title
+    yPos = drawTitle(painter, yPos, companyName, reportName, pageWidth);
+
+    // Finish drawing
+    painter.end();
+
+    // Open the PDF file
+    if (!fullFilePath.isEmpty()) {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(fullFilePath));
+    }
 }
 
 // Setup Pdf
