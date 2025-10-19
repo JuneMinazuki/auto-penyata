@@ -127,6 +127,7 @@ void PdfGenerator::createPkkPdf(const QMap<QString, QVariantMap> &data, const do
 
     // Draw title
     yPos = drawTitle(painter, yPos, companyName, reportName, pageWidth);
+    yPos = drawColumnHeader(painter, yPos, false);
 
     // Finish drawing
     painter.end();
@@ -435,7 +436,7 @@ void PdfGenerator::drawLine(QPainter& painter, int xCol, int yPos){
     painter.drawLine(xCol, yPos - 52.4, xCol + columnWidth, yPos - 52.4);
 }
 
-// Draw line
+// Draw header
 int PdfGenerator::drawHeader(QPainter& painter, QPdfWriter* writer, const QString& header, int yPos){
     // Check if out of bound
     yPos = checkYPos(painter, writer, yPos);
@@ -454,20 +455,44 @@ int PdfGenerator::drawHeader(QPainter& painter, QPdfWriter* writer, const QStrin
 }
 
 // Draw column header
-int PdfGenerator::drawColumnHeader(QPainter& painter, int yPos){
+int PdfGenerator::drawColumnHeader(QPainter& painter, int yPos, bool type){
     // Draw value column headers (RM)
-    painter.setFont(headerFont);
-    QFontMetrics headerFm = painter.fontMetrics();
+    if (type) {
+        painter.setFont(headerFont);
+        QFontMetrics headerFm = painter.fontMetrics();
 
-    QRect col1Rect = createValueRect(xCol1, yPos, headerFm);
-    painter.drawText(col1Rect, Qt::AlignCenter, "RM");
+        QRect col1Rect = createValueRect(xCol1, yPos, headerFm);
+        painter.drawText(col1Rect, Qt::AlignCenter, "RM");
 
-    QRect col2Rect = createValueRect(xCol2, yPos, headerFm);
-    painter.drawText(col2Rect, Qt::AlignCenter, "RM");
+        QRect col2Rect = createValueRect(xCol2, yPos, headerFm);
+        painter.drawText(col2Rect, Qt::AlignCenter, "RM");
 
-    QRect col3Rect = createValueRect(xCol3, yPos, headerFm);
-    painter.drawText(col3Rect, Qt::AlignCenter, "RM");
-    yPos += headerFm.height() * 1.4;
+        QRect col3Rect = createValueRect(xCol3, yPos, headerFm);
+        painter.drawText(col3Rect, Qt::AlignCenter, "RM");
+        yPos += headerFm.height();
+    }
+    // Draw title for aset bukan semasa
+    else {
+        painter.setFont(headerFont);
+        QFontMetrics headerFm = painter.fontMetrics();
+
+        QRect col1Rect = createValueRect(xCol1, yPos, headerFm);
+        painter.drawText(col1Rect, Qt::AlignCenter, "Kos");
+
+        QRect col2Rect = createValueRect(xCol2, yPos, headerFm);
+        painter.drawText(col2Rect, Qt::AlignCenter, "Susut Nilai");
+
+        QRect col3Rect = createValueRect(xCol3, yPos, headerFm);
+        painter.drawText(col3Rect, Qt::AlignCenter, "Nilai");
+        yPos += headerFm.height();
+
+        QRect col4Rect = createValueRect(xCol2, yPos, headerFm);
+        painter.drawText(col4Rect, Qt::AlignCenter, "Terkumpul");
+
+        QRect col5Rect = createValueRect(xCol3, yPos, headerFm);
+        painter.drawText(col5Rect, Qt::AlignCenter, "Buku");
+        yPos += headerFm.height();
+    }
 
     return yPos;
 }

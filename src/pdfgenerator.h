@@ -88,7 +88,7 @@ private:
     static int drawHeader(QPainter& painter, QPdfWriter* writer, const QString& header, int yPos);
 
     // Draw column header
-    static int drawColumnHeader(QPainter& painter, int yPos);
+    static int drawColumnHeader(QPainter& painter, int yPos, bool type = true);
 
     // Setup new page
     static int checkYPos(QPainter& painter, QPdfWriter* writer, int yPos);
