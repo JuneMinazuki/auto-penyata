@@ -354,6 +354,7 @@ QWidget* BlockManager::createAbsBlock(const QString &key, QString value, QString
     );
 
     amountEdit->setStyleSheet(valueStyleSheet);
+    amountEdit->setObjectName(key);
     amountEdit->setValidator(validator);
     amountEdit->setFixedWidth(120);
 
@@ -362,8 +363,53 @@ QWidget* BlockManager::createAbsBlock(const QString &key, QString value, QString
     deprecatedCostEdit->setFixedWidth(120);
 
     // Reformat the text when the user is finished editing
-    connect(amountEdit, &QLineEdit::editingFinished, this, &BlockManager::reformatValueOnFinish);
-    connect(deprecatedCostEdit, &QLineEdit::editingFinished, this, &BlockManager::reformatValueOnFinish);
+    connect(amountEdit, &QLineEdit::editingFinished, this, [amountEdit, deprecatedCostEdit, value]() {
+        // Get values
+        bool okCurrent, okDeprecated;
+        double currentVal = amountEdit->text().toDouble(&okCurrent);
+        double deprecatedVal = deprecatedCostEdit->text().toDouble(&okDeprecated);
+
+        if (!okCurrent) currentVal = 0.0;
+        if (!okDeprecated) deprecatedVal = 0.0;
+        
+        // Check if current value is less than deprecated value
+        if (currentVal < deprecatedVal) {
+            // Reset to the initial value
+            bool okInitial;
+            double initialVal = value.toDouble(&okInitial);
+            if (!okInitial) initialVal = 0.0;
+            
+            // Reformat the current value
+            amountEdit->setText(QString::number(initialVal, 'f', 2));
+        } else {
+            // Reformat the current value
+            amountEdit->setText(QString::number(currentVal, 'f', 2));
+        }
+    });
+
+    connect(deprecatedCostEdit, &QLineEdit::editingFinished, this, [amountEdit, deprecatedCostEdit, deprecatedValue]() {
+        // Get values
+        bool okCurrent, okDeprecated;
+        double currentVal = amountEdit->text().toDouble(&okCurrent);
+        double deprecatedVal = deprecatedCostEdit->text().toDouble(&okDeprecated);
+
+        if (!okCurrent) currentVal = 0.0;
+        if (!okDeprecated) deprecatedVal = 0.0;
+        
+        // Check if current value is less than deprecated value
+        if (currentVal < deprecatedVal) {
+            // Reset to the initial value
+            bool okInitial;
+            double initialDeprecatedVal = deprecatedValue.toDouble(&okInitial);
+            if (!okInitial) initialDeprecatedVal = 0.0;
+            
+            // Reformat the current value
+            deprecatedCostEdit->setText(QString::number(initialDeprecatedVal, 'f', 2));
+        } else {
+            // Reformat the current value
+            deprecatedCostEdit->setText(QString::number(deprecatedVal, 'f', 2));
+        }
+    });
 
     // Check for duplicate keys
     connect(keyEdit, &QLineEdit::textChanged, this, [this, keyEdit, amountEdit]() {
