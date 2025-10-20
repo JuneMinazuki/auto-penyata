@@ -510,8 +510,13 @@ QVariantMap BlockManager::getAbsValueMap() const
 
         // Create a nested map to store the value and deprecated value
         QVariantMap valueMap;
-        valueMap.insert("value", valueEdit->text().toDouble());
-        valueMap.insert("deprecatedValue", deprecatedValueEdit->text().toDouble());
+
+        // Get the double values from the line edits
+        double value = valueEdit->text().toDouble();
+        double deprecatedValue = deprecatedValueEdit->text().toDouble();
+
+        valueMap.insert("value", QString::number(value, 'f', 2));
+        valueMap.insert("deprecatedValue", QString::number(deprecatedValue, 'f', 2));
 
         // Add the nested map to the main map using the asset name as the key
         allValuesMap.insert(keyName, valueMap);
