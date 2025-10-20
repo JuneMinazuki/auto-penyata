@@ -129,6 +129,14 @@ void PdfGenerator::createPkkPdf(const QMap<QString, QVariantMap> &data, const do
     yPos = drawTitle(painter, yPos, companyName, reportName, pageWidth);
     yPos = drawColumnHeader(painter, yPos, false);
 
+    // Calculate data
+    DebitData debitData = calculateDebit(data);
+    CreditData creditData = calculateCredit(data, untungBersih);
+
+    // Debit side
+
+    // Credit side
+
     // Finish drawing
     painter.end();
 
@@ -400,6 +408,113 @@ PdfGenerator::UntungBersihData PdfGenerator::calculateUntungBersih(const QVarian
     untungBersihData.hasBelanja = !untungBersihData.belanjaAccount.isEmpty();
 
     return untungBersihData;
+}
+
+// Calculate debit side
+PdfGenerator::DebitData PdfGenerator::calculateDebit(const QMap<QString, QVariantMap> &data){
+    PdfGenerator::DebitData debitData;
+
+    // Get data from Json
+    QVariantMap absData = data.value("aset_bukan_semasa.json");
+    QVariantMap asData = data.value("aset_semasa.json");
+    QVariantMap lsData = data.value("liabiliti_semasa.json");
+
+    // Aset bukan semasa
+    for (const QString &key : absData.keys()) {
+        if (key == "_placeholder"){
+            continue;
+        }
+
+        // Get kos and susut nilai terkumpul
+        QVariantMap innerMap = absData[key].toMap();
+        const double &value = innerMap.value("value").toDouble();
+        const double &deprecatedValue = innerMap.value("deprecatedValue").toDouble();
+        double bookValue =value - deprecatedValue;
+
+        if (value != 0) {
+            debitData.AbsKos.append({key, value});
+            debitData.AbsSnt.append({key, deprecatedValue});
+            debitData.AbsBukuNilai.append({key, bookValue});
+            debitData.totalAbs += bookValue;
+        }
+    }
+    debitData.hasAbs = !debitData.AbsKos.isEmpty();
+
+    // Aset semasa
+    for (const QString &key : asData.keys()) {
+        if (key == "_placeholder"){
+            continue;
+        }
+
+        double value = asData[key].toDouble();
+        if (value != 0.0) {
+            if (key == "Peruntukan Hutang Ragu"){
+                debitData.PeruntukanHutangRagu = value;
+                debitData.hasPeruntukanHutangRagu = true;
+            }
+            else {
+                debitData.AsAccount.append({key, value});
+                debitData.totalAs += value;
+            }
+        }
+    }
+    debitData.hasAs = !debitData.AsAccount.isEmpty();
+    debitData.inventoriAkhir = data.value("apur.json")["Inventori Akhir"].toDouble();
+
+    // Liabiliti semasa
+    for (const QString &key : lsData.keys()) {
+        if (key == "_placeholder"){
+            continue;
+        }
+
+        double value = lsData[key].toDouble();
+        if (value != 0.0) {
+            debitData.LsAccount.append({key, value});
+            debitData.totalLs += value;
+        }
+    }
+    debitData.hasLs = !debitData.LsAccount.isEmpty();
+
+    // Modal kerja
+    debitData.modalKerja = debitData.totalAs - debitData.totalLs;
+    debitData.totalDebit = debitData.totalAbs + debitData.modalKerja;
+
+    return debitData;
+}
+
+// Calculate credit side
+PdfGenerator::CreditData PdfGenerator::calculateCredit(const QMap<QString, QVariantMap> &data, const double untungBersih){
+    PdfGenerator::CreditData creditData;
+
+    // Get data from Json
+    QVariantMap epData = data.value("ekuiti_pemilik.json");
+    QVariantMap lbsData = data.value("liabiliti_bukan_semasa.json");
+
+    // Ekuiti Pemilik
+    creditData.modalAwal = epData["Modal Awal"].toDouble();
+    creditData.untungBersih = untungBersih;
+    creditData.jumlahModal = creditData.modalAwal + creditData.untungBersih;
+    creditData.ambilan = epData["Ambilan"].toDouble();
+    creditData.modalAkhir = creditData.jumlahModal - creditData.ambilan;
+
+    // Liabiliti bukan semasa
+    for (const QString &key : lbsData.keys()) {
+        if (key == "_placeholder"){
+            continue;
+        }
+
+        double value = lbsData[key].toDouble();
+        if (value != 0.0) {
+            creditData.lbsAccount.append({key, value});
+            creditData.totalLbs += value;
+        }
+    }
+    creditData.hasLbs = !creditData.lbsAccount.isEmpty();
+
+    // Total credit
+    creditData.totalCredit = creditData.modalAkhir + creditData.totalLbs;
+
+    return creditData;
 }
 
 // Create a QRect for the value columns

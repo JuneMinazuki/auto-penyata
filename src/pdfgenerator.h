@@ -55,6 +55,51 @@ private:
         bool hasHasil;
         bool hasBelanja;
     };
+    struct DebitData{
+        // Aset bukan semasa
+        QList<QPair<QString, double>> AbsKos;
+        QList<QPair<QString, double>> AbsSnt;
+        QList<QPair<QString, double>> AbsBukuNilai;
+        double totalAbs;
+
+        // Aset semasa
+        QList<QPair<QString, double>> AsAccount;
+        double inventoriAkhir;
+        double PeruntukanHutangRagu;
+        double totalAs;
+
+        // Liabiliti semasa
+        QList<QPair<QString, double>> LsAccount;
+        double totalLs;
+
+        // Modal kerja
+        double modalKerja;
+        double totalDebit;
+
+        // Flags for drawing logic
+        bool hasPeruntukanHutangRagu = false;
+        bool hasAbs = false;
+        bool hasAs = false;
+        bool hasLs = false;
+    };
+    struct CreditData{
+        // Ekuiti Pemilik
+        double modalAwal;
+        double untungBersih;
+        double jumlahModal;
+        double ambilan;
+        double modalAkhir;
+
+        // Liabiliti bukan semasa
+        QList<QPair<QString, double>> lbsAccount;
+        double totalLbs;
+
+        // Total credit
+        double totalCredit;
+
+        // Flags for drawing logic
+        bool hasLbs = false;
+    };
 
     // Generate pdf
     static double createApurPdf(const QMap<QString, QVariantMap> &data);
@@ -74,6 +119,8 @@ private:
     // Calculate value
     static UntungKasarData calculateUntungKasar(const QVariantMap& data);
     static UntungBersihData calculateUntungBersih(const QVariantMap& hasilData, const QVariantMap& belanjaData, const double untungKasar);
+    static DebitData calculateDebit(const QMap<QString, QVariantMap> &data);
+    static CreditData calculateCredit(const QMap<QString, QVariantMap> &data, const double untungBersih);
 
     // Create a QRect for the value columns
     static QRect createValueRect(int xLeft, int yBaseLine, const QFontMetrics& fm);
