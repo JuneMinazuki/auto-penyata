@@ -347,6 +347,64 @@ int PdfGenerator::drawDebit(QPainter& painter, QPdfWriter* writer, int yPos, con
         yPos = generateRow(painter, writer, "", data.totalAbs, xCol3, yPos);
     }
 
+    // Aset semasa
+    if (data.hasAs){
+        yPos = drawHeader(painter, writer, "Aset Semasa", yPos);
+
+        // Akaun belum terima
+        yPos = generateRow(painter, writer, "Akaun Belum Terima", data.akaunBelumTerima, xCol2, yPos);
+        if (data.hasPeruntukanHutangRagu){
+            yPos = generateRow(painter, writer, "- Peruntukan Hutang Ragu", data.PeruntukanHutangRagu, xCol2, yPos, true);
+            drawLine(painter, xCol2, yPos);
+            yPos = generateRow(painter, writer, "", data.actualABT, xCol2, yPos);
+        }
+
+        // Inventori Akhir
+        yPos = generateRow(painter, writer, "Inventori Akhir", data.inventoriAkhir, xCol2, yPos);
+
+        for (const QPair<QString, double> &item : data.AsAccount){
+            yPos = generateRow(painter, writer, item.first, item.second, xCol2, yPos);
+        }
+
+        drawLine(painter, xCol2, yPos);
+        yPos = generateRow(painter, writer, "", data.totalAs, xCol2, yPos);
+    }
+
+    // Liabiliti semasa
+    if (data.hasLs){
+        yPos = drawHeader(painter, writer, "- Liabiliti Semasa", yPos);
+
+        if (data.LsAccount.count() == 1){
+            const QPair<QString, double>& item = data.LsAccount.first();
+            yPos = generateRow(painter, writer, item.first, item.second, xCol2, yPos, true);
+            drawLine(painter, xCol2, yPos);
+        }
+        else{
+            for (const QPair<QString, double> &item : data.LsAccount){
+                yPos = generateRow(painter, writer, item.first, item.second, xCol1, yPos);
+            }
+
+            drawLine(painter, xCol1, yPos);
+            yPos = generateRow(painter, writer, "", data.totalLs, xCol2, yPos, true);
+            drawLine(painter, xCol2, yPos);
+        }
+    }
+
+    // Modal kerja
+    if (data.modalKerja >= 0){
+        yPos = generateRow(painter, writer, "Modal Kerja", data.modalKerja, xCol3, yPos);
+    } else {
+        yPos = generateRow(painter, writer, "Modal Kerja", -data.modalKerja, xCol3, yPos, true);
+    }
+    drawLine(painter, xCol3, yPos);
+
+    if (data.totalDebit >= 0){
+        yPos = generateRow(painter, writer, "Modal Kerja", data.totalDebit, xCol3, yPos);
+    } else {
+        yPos = generateRow(painter, writer, "Modal Kerja", -data.totalDebit, xCol3, yPos, true);
+    }
+    drawLine(painter, xCol3, yPos);
+
     return yPos;
 }
 
@@ -468,14 +526,21 @@ PdfGenerator::DebitData PdfGenerator::calculateDebit(const QMap<QString, QVarian
                 debitData.PeruntukanHutangRagu = value;
                 debitData.hasPeruntukanHutangRagu = true;
             }
+            else if (key == "Akaun Belum Terima"){
+                debitData.akaunBelumTerima = value;
+            }
             else {
                 debitData.AsAccount.append({key, value});
                 debitData.totalAs += value;
             }
         }
     }
-    debitData.hasAs = !debitData.AsAccount.isEmpty();
+    debitData.actualABT = debitData.akaunBelumTerima - debitData.PeruntukanHutangRagu;
+    debitData.totalAs += debitData.actualABT;
+
     debitData.inventoriAkhir = data.value("apur.json")["Inventori Akhir"].toDouble();
+    debitData.totalAs += debitData.inventoriAkhir;
+    debitData.hasAs = (!debitData.AsAccount.isEmpty() || debitData.akaunBelumTerima != 0 || debitData.inventoriAkhir != 0);
 
     // Liabiliti semasa
     for (const QString &key : lsData.keys()) {

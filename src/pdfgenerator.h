@@ -69,7 +69,9 @@ private:
         // Aset semasa
         QList<QPair<QString, double>> AsAccount;
         double inventoriAkhir;
-        double PeruntukanHutangRagu;
+        double akaunBelumTerima;
+        double PeruntukanHutangRagu = 0.0;
+        double actualABT = 0.0;
         double totalAs = 0.0;
 
         // Liabiliti semasa
