@@ -127,13 +127,13 @@ void PdfGenerator::createPkkPdf(const QMap<QString, QVariantMap> &data, const do
 
     // Draw title
     yPos = drawTitle(painter, yPos, companyName, reportName, pageWidth);
-    yPos = drawColumnHeader(painter, yPos, false);
 
     // Calculate data
     DebitData debitData = calculateDebit(data);
     CreditData creditData = calculateCredit(data, untungBersih);
 
     // Debit side
+    yPos = drawDebit(painter, writer.get(), yPos, debitData);
 
     // Credit side
 
@@ -332,6 +332,24 @@ int PdfGenerator::drawUntungBersih(QPainter& painter, QPdfWriter* writer, int yP
     return yPos;
 }
 
+// Draw debit side
+int PdfGenerator::drawDebit(QPainter& painter, QPdfWriter* writer, int yPos, const DebitData& data){
+    // Aset bukan semasa
+    if (data.hasAbs){
+        yPos = drawColumnHeader(painter, yPos, false);
+        yPos = drawHeader(painter, writer, "Aset Bukan Semasa", yPos);
+
+        for (const AbsEntry &item : data.AbsEntries){
+            yPos = generateAbsRow(painter, writer, item.key, item.kos, item.snt, item.bukuNilai, yPos);
+        }
+
+        drawLine(painter, xCol3, yPos);
+        yPos = generateRow(painter, writer, "", data.totalAbs, xCol3, yPos);
+    }
+
+    return yPos;
+}
+
 // Calculate untung kasar
 PdfGenerator::UntungKasarData PdfGenerator::calculateUntungKasar(const QVariantMap& data){
     PdfGenerator::UntungKasarData apurData;
@@ -429,16 +447,14 @@ PdfGenerator::DebitData PdfGenerator::calculateDebit(const QMap<QString, QVarian
         QVariantMap innerMap = absData[key].toMap();
         const double &value = innerMap.value("value").toDouble();
         const double &deprecatedValue = innerMap.value("deprecatedValue").toDouble();
-        double bookValue =value - deprecatedValue;
 
         if (value != 0) {
-            debitData.AbsKos.append({key, value});
-            debitData.AbsSnt.append({key, deprecatedValue});
-            debitData.AbsBukuNilai.append({key, bookValue});
+            double bookValue = value - deprecatedValue;
+            debitData.AbsEntries.append({key, value, deprecatedValue, bookValue});
             debitData.totalAbs += bookValue;
         }
     }
-    debitData.hasAbs = !debitData.AbsKos.isEmpty();
+    debitData.hasAbs = !debitData.AbsEntries.isEmpty();
 
     // Aset semasa
     for (const QString &key : asData.keys()) {
@@ -546,6 +562,34 @@ int PdfGenerator::generateRow(QPainter& painter, QPdfWriter* writer, const QStri
     return yPos;
 }
 
+// Create row of account for ABS
+int PdfGenerator::generateAbsRow(QPainter& painter, QPdfWriter* writer, const QString& accountName, const QVariant& kos, const QVariant& snt, const QVariant& nilaiBuku, int yPos){
+    // Check if out of bound
+    yPos = checkYPos(painter, writer, yPos);
+
+    // Get font metrics for calculating rectangle height
+    const QFontMetrics fm = painter.fontMetrics();
+
+    // Draw the name of account
+    painter.drawText(xStartLeft, yPos, accountName);
+
+    // Draw the value
+    QString stringKos = QString::number(kos.toDouble(), 'f', 2);
+    QString stringSnt = QString("(%1)").arg(QString::number(snt.toDouble(), 'f', 2));
+    QString stringBukuNilai = QString::number(nilaiBuku.toDouble(), 'f', 2);
+
+    QRect kosRect = createValueRect(xCol1, yPos, fm);
+    QRect sntRect = createValueRect(xCol2, yPos, fm);
+    QRect bukuNilaiRect = createValueRect(xCol3, yPos, fm);
+
+    painter.drawText(kosRect, Qt::AlignRight, stringKos);
+    painter.drawText(sntRect, Qt::AlignRight, stringSnt);
+    painter.drawText(bukuNilaiRect, Qt::AlignRight, stringBukuNilai);
+
+    yPos += fm.height() * 1.4;
+    return yPos;
+}
+
 // Draw line
 void PdfGenerator::drawLine(QPainter& painter, int xCol, int yPos){
     painter.drawLine(xCol, yPos - 52.4, xCol + columnWidth, yPos - 52.4);
@@ -606,7 +650,6 @@ int PdfGenerator::drawColumnHeader(QPainter& painter, int yPos, bool type){
 
         QRect col5Rect = createValueRect(xCol3, yPos, headerFm);
         painter.drawText(col5Rect, Qt::AlignCenter, "Buku");
-        yPos += headerFm.height();
     }
 
     return yPos;

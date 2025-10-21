@@ -14,6 +14,12 @@ public:
 
 private:
     // Data struct
+    struct AbsEntry {
+        QString key;
+        double kos;
+        double snt;
+        double bukuNilai;
+    };
     struct UntungKasarData{
         // Jualan
         double jualan;
@@ -41,11 +47,11 @@ private:
     struct UntungBersihData{
         // Hasil
         QList<QPair<QString, double>> hasilAccount;
-        double totalHasil;
+        double totalHasil = 0.0;
 
         // Belanja
         QList<QPair<QString, double>> belanjaAccount;
-        double totalBelanja;
+        double totalBelanja = 0.0;
 
         // Untung bersih
         double tambahHasil;
@@ -57,20 +63,18 @@ private:
     };
     struct DebitData{
         // Aset bukan semasa
-        QList<QPair<QString, double>> AbsKos;
-        QList<QPair<QString, double>> AbsSnt;
-        QList<QPair<QString, double>> AbsBukuNilai;
-        double totalAbs;
+        QList<AbsEntry> AbsEntries;
+        double totalAbs = 0.0;
 
         // Aset semasa
         QList<QPair<QString, double>> AsAccount;
         double inventoriAkhir;
         double PeruntukanHutangRagu;
-        double totalAs;
+        double totalAs = 0.0;
 
         // Liabiliti semasa
         QList<QPair<QString, double>> LsAccount;
-        double totalLs;
+        double totalLs = 0.0;
 
         // Modal kerja
         double modalKerja;
@@ -92,7 +96,7 @@ private:
 
         // Liabiliti bukan semasa
         QList<QPair<QString, double>> lbsAccount;
-        double totalLbs;
+        double totalLbs = 0.0;
 
         // Total credit
         double totalCredit;
@@ -115,6 +119,7 @@ private:
     // Draw apur
     static int drawUntungKasar(QPainter& painter, QPdfWriter* writer, int yPos, const UntungKasarData& apurData, bool containHasilBelanja);
     static int drawUntungBersih(QPainter& painter, QPdfWriter* writer, int yPos, const UntungBersihData& data);
+    static int drawDebit(QPainter& painter, QPdfWriter* writer, int yPos, const DebitData& data);
 
     // Calculate value
     static UntungKasarData calculateUntungKasar(const QVariantMap& data);
@@ -126,7 +131,8 @@ private:
     static QRect createValueRect(int xLeft, int yBaseLine, const QFontMetrics& fm);
 
     // Create row of account
-    static int generateRow(QPainter& painter, QPdfWriter* writer, const QString& accountName, const QVariant& accountValue, int xCol, int yPos, bool neg = false);
+    static int generateRow(QPainter& painter, QPdfWriter* writer, const QString& accountName, const QVariant& accountValue, int xCol, int yPos, bool neg = false);    
+    static int generateAbsRow(QPainter& painter, QPdfWriter* writer, const QString& accountName, const QVariant& kos, const QVariant& snt, const QVariant& nilaiBuku, int yPos);
 
     // Draw line
     static void drawLine(QPainter& painter, int xCol, int yPos);
