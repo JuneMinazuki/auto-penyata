@@ -136,6 +136,7 @@ void PdfGenerator::createPkkPdf(const QMap<QString, QVariantMap> &data, const do
     yPos = drawDebit(painter, writer.get(), yPos, debitData);
 
     // Credit side
+    yPos = drawCredit(painter, writer.get(), yPos, creditData);
 
     // Finish drawing
     painter.end();
@@ -399,10 +400,72 @@ int PdfGenerator::drawDebit(QPainter& painter, QPdfWriter* writer, int yPos, con
     drawLine(painter, xCol3, yPos);
 
     if (data.totalDebit >= 0){
-        yPos = generateRow(painter, writer, "Modal Kerja", data.totalDebit, xCol3, yPos);
+        yPos = generateRow(painter, writer, "", data.totalDebit, xCol3, yPos);
     } else {
-        yPos = generateRow(painter, writer, "Modal Kerja", -data.totalDebit, xCol3, yPos, true);
+        yPos = generateRow(painter, writer, "", -data.totalDebit, xCol3, yPos, true);
     }
+    drawLine(painter, xCol3, yPos);
+
+    return yPos;
+}
+
+// Draw credit side
+int PdfGenerator::drawCredit(QPainter& painter, QPdfWriter* writer, int yPos, const CreditData& data){
+    // Ekuiti Pemilik
+    yPos = drawHeader(painter, writer, "Ekuiti Pemilik", yPos);
+
+    yPos = generateRow(painter, writer, "Modal Awal", data.modalAwal, xCol3, yPos);
+
+    if (data.untungBersih >= 0){
+        yPos = generateRow(painter, writer, "Untung Bersih", data.untungBersih, xCol3, yPos);
+    } else {
+        yPos = generateRow(painter, writer, "Rugi Bersih", -data.untungBersih, xCol3, yPos, true);
+    }
+    drawLine(painter, xCol3, yPos);
+
+    if (data.ambilan == 0){
+        if (data.jumlahModal >= 0){
+            yPos = generateRow(painter, writer, "Modal Akhir", data.jumlahModal, xCol3, yPos);
+        } else {
+            yPos = generateRow(painter, writer, "Modal Akhir", -data.jumlahModal, xCol3, yPos, true);
+        }
+    } else {
+        if (data.jumlahModal >= 0){
+            yPos = generateRow(painter, writer, "", data.jumlahModal, xCol3, yPos);
+        } else {
+            yPos = generateRow(painter, writer, "", -data.jumlahModal, xCol3, yPos, true);
+        }
+
+        yPos = generateRow(painter, writer, "- Ambilan", data.ambilan, xCol3, yPos, true);
+        drawLine(painter, xCol3, yPos);
+
+        if (data.modalAkhir >= 0){
+            yPos = generateRow(painter, writer, "Modal Akhir", data.modalAkhir, xCol3, yPos);
+        } else {
+            yPos = generateRow(painter, writer, "Modal Akhir", -data.modalAkhir, xCol3, yPos, true);
+        }
+    }
+
+    // Liabiliti bukan semasa
+    if (data.hasLbs){
+        yPos = drawHeader(painter, writer, "Liabiliti Bukan Semasa", yPos);
+
+        if (data.lbsAccount.count() == 1){
+            const QPair<QString, double>& item = data.lbsAccount.first();
+            yPos = generateRow(painter, writer, item.first, item.second, xCol3, yPos);
+        }
+        else{
+            for (const QPair<QString, double> &item : data.lbsAccount){
+                yPos = generateRow(painter, writer, item.first, item.second, xCol2, yPos);
+            }
+
+            drawLine(painter, xCol2, yPos);
+            yPos = generateRow(painter, writer, "", data.totalLbs, xCol3, yPos);
+        }
+        drawLine(painter, xCol3, yPos);
+        yPos = generateRow(painter, writer, "", data.totalCredit, xCol3, yPos);
+    }
+
     drawLine(painter, xCol3, yPos);
 
     return yPos;

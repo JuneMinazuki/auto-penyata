@@ -122,6 +122,7 @@ private:
     static int drawUntungKasar(QPainter& painter, QPdfWriter* writer, int yPos, const UntungKasarData& apurData, bool containHasilBelanja);
     static int drawUntungBersih(QPainter& painter, QPdfWriter* writer, int yPos, const UntungBersihData& data);
     static int drawDebit(QPainter& painter, QPdfWriter* writer, int yPos, const DebitData& data);
+    static int drawCredit(QPainter& painter, QPdfWriter* writer, int yPos, const CreditData& data);
 
     // Calculate value
     static UntungKasarData calculateUntungKasar(const QVariantMap& data);
