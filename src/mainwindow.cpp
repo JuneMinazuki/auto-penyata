@@ -3,6 +3,7 @@
 #include "jsonmanager.h"
 
 #include <QCloseEvent>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -161,7 +162,15 @@ void MainWindow::onSidebarItemClicked(QListWidgetItem *item)
 }
 
 void MainWindow::generatePDF(){
-    // Read from Json
-    QMap<QString, QVariantMap> jsonData = JsonManager::readAllJson();
-    PdfGenerator::createAllPDF(jsonData);
+    if (m_statusBar->checkBalance()){
+        // Read from Json
+        QMap<QString, QVariantMap> jsonData = JsonManager::readAllJson();
+        PdfGenerator::createAllPDF(jsonData);
+    } else {
+        QMessageBox::information(
+            this,
+            "Account is not balance",
+            "Please make sure the account is balance before exporting as PDF."
+        );
+    }
 }

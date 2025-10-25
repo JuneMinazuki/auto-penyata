@@ -266,3 +266,10 @@ void StatusBar::updateEpValue(const QVariantMap epData, bool reverse)
         debitAmount -= epData["Ambilan"].toDouble();
     }
 }
+
+// Check if account is balance
+bool StatusBar::checkBalance()
+{
+    createStatusBar();
+    return (debitAmount == creditAmount);
+}

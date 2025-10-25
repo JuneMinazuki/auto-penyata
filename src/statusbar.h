@@ -14,6 +14,9 @@ public:
     void updateStatusBar(QString page, QVariantMap newData, QVariantMap oldData);
     void createStatusBar();
 
+    // Check if account is balance
+    bool checkBalance();
+
 private:
     Ui::MainWindow *ui;
 
