@@ -2,7 +2,7 @@
 
 <img width="650" alt="Banner" src="https://github.com/user-attachments/assets/3bb61671-4624-4b56-b8e9-a60626c0de30" />
 
-[![Release version](https://img.shields.io/github/v/release/auto-penyata/auto-penyata?color=brightgreen&label=Download&style=for-the-badge)](#installation "Installation")
+[![Release version](https://img.shields.io/github/v/release/JuneMinazuki/auto-penyata?color=brightgreen&label=Download&style=for-the-badge)](#installation "Installation")
 
 </div>
 
@@ -18,7 +18,7 @@
 </p>
 
 ## About The Project
-**'auto-penyata'** is a simple desktop application designed to help prinsip perakauanan students generate key financial statements.
+**'auto-penyata'** is a simple desktop application designed to help Prinsip Perakaunan students generate key financial statements.
 
 The application allows you to input a trial balance (Imbangan Duga) and any necessary adjustments (Pelarasan) to automatically produce:
 
@@ -51,9 +51,8 @@ These statements can then be exported as a clean, professional PDF file.
 
 This is the easiest way to install. Click on your computer operating system below:
 
-[![Windows](https://img.shields.io/badge/-Windows_x64-blue.svg?style=for-the-badge&logo=windows)]()
-[![MacOS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white)]()
-[![Source Tarball](https://img.shields.io/badge/-Source_tar-green.svg?style=for-the-badge)]() 
+[![MacOS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/JuneMinazuki/auto-penyata/releases/download/v1.0/AutoPenyata.dmg)
+[![Source Tarball](https://img.shields.io/badge/-Source_tar-green.svg?style=for-the-badge)](https://github.com/JuneMinazuki/auto-penyata/archive/refs/tags/v1.0.tar.gz) 
 
 1. Go to the Releases page of this repository.
 2. Find the latest release, which is `v1.0`.
