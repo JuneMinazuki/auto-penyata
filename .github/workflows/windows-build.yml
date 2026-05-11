@@ -1,0 +1,59 @@
+name: Windows Release Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.5.0'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2019_64'
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Python Dependencies
+        run: pip install Pillow
+
+      - name: Convert ICNS to ICO
+        shell: pwsh
+        run: |
+          python -c "from PIL import Image; img = Image.open('icon.icns'); img.save('icon.ico', format='ICO', sizes=[(16,16), (32,32), (48,48), (64,64), (128,128), (256,256)])"
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -S . `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DQT_VERSION_MAJOR=6
+
+      - name: Build Project
+        run: cmake --build build --config Release
+
+      - name: Deploy Qt Dependencies
+        shell: pwsh
+        run: |
+          windeployqt --release --no-translations "build/Release/Auto Penyata.exe"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Auto-Penyata-Windows
+          path: build/Release/
